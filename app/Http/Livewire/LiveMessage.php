@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\SendNewMessage;
 use Livewire\Component;
 use App\Models\Conversation;
 use App\Models\Message;
@@ -11,7 +12,10 @@ use Illuminate\Support\Facades\Auth;
 class LiveMessage extends Component
 {
 
-    public $conversation, $newUser, $newMessage;
+    public $conversation, $newUser, $newMessage, $conversation_id;
+
+    protected $listeners = ['refreshMessage' => 'getMessage'];
+
 
     public function sendMessage()
     {
@@ -37,14 +41,22 @@ class LiveMessage extends Component
 
         $this->newMessage = '';
 
-        // broadcast(new NewChatMessage($chat))->toOthers();
+        broadcast(new SendNewMessage($message))->toOthers();
         $this->getMessage($conversation_id);
     }
 
+
     public function getMessage($id)
     {
+        $this->conversation_id = $id;
         $this->conversation = Conversation::with(["from", "to", "message"])->find($id);
         $this->dispatchBrowserEvent('scroll-bottom');
+        $this->emit('conversation', $this->conversation);
+    }
+
+    public function refreshMessage()
+    {
+        $this->getMessage($this->conversation_id);
     }
 
     public function getConversationsProperty()

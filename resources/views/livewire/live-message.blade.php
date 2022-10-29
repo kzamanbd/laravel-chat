@@ -230,4 +230,14 @@
 
 
     </div>
+    @slot('scripts')
+        <script>
+            window.livewire.on('conversation', (conversation) => {
+                window.Echo.channel(`message.${conversation.id}`).on('message.new', (response) => {
+                    console.log(response);
+                    window.livewire.emit('refreshMessage', conversation.id);
+                });
+            });
+        </script>
+    @endslot
 </div>

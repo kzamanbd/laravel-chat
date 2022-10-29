@@ -35,6 +35,7 @@
         </main>
     </div>
     @livewireScripts
+    {{ $scripts ?? null }}
 </body>
 
 </html>
