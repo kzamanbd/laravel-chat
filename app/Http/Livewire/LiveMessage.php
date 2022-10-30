@@ -93,7 +93,7 @@ class LiveMessage extends Component
     public function getUsersProperty()
     {
         $ids = array_merge(
-            [Auth::user()->getAuthIdentifier()],
+            $this->conversations->pluck('from_user_id')->toArray(),
             $this->conversations->pluck('to_user_id')->toArray()
         );
         return User::query()->whereNotIn("id", $ids)->get();
