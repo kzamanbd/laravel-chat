@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class LiveMessage extends Component
 {
 
-    public $conversation, $newUser, $newMessage, $conversation_id;
+    public $conversation, $newConversation, $newMessage, $conversation_id, $isSelectedConversation = false;
 
     protected $listeners = ['refreshMessage' => 'getMessage'];
 
@@ -26,7 +26,7 @@ class LiveMessage extends Component
         if (!isset($this->conversation->id)) {
             $conversation = Conversation::create([
                 'from_user_id' => Auth::id(),
-                'to_user_id' => $this->newUser->id
+                'to_user_id' => $this->newConversation->id
             ]);
             $conversation_id = $conversation->id;
         } else {
@@ -39,7 +39,7 @@ class LiveMessage extends Component
             'message' => $this->newMessage
         ]);
 
-        $this->newMessage = '';
+        $this->newMessage = null;
 
         broadcast(new SendNewMessage($message))->toOthers();
         $this->getMessage($conversation_id);
@@ -48,16 +48,12 @@ class LiveMessage extends Component
 
     public function getMessage($id)
     {
-        $this->conversation_id = $id;
+        $this->isSelectedConversation = true;
         $this->conversation = Conversation::with(["from", "to", "message"])->find($id);
         $this->dispatchBrowserEvent('scroll-bottom');
         $this->emit('conversation', $this->conversation);
     }
 
-    public function refreshMessage()
-    {
-        $this->getMessage($this->conversation_id);
-    }
 
     public function getConversationsProperty()
     {
@@ -75,10 +71,11 @@ class LiveMessage extends Component
         Message::query()->where("conversation_id", $id)->update(["status" => 1]);
     }
 
-    public function newConversation($id)
+    public function startNewConversation($id)
     {
         $this->conversation = null;
-        $this->newUser = User::find($id);
+        $this->isSelectedConversation = true;
+        $this->newConversation = User::find($id);
     }
 
     public function hasNewMessage()
