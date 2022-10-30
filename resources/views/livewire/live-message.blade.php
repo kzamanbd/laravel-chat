@@ -16,9 +16,10 @@
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-row h-full w-full">
 
-            <div class="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0 h-[calc(100vh-200px)] overflow-y-auto">
+            <div
+                class="flex flex-col p-6 w-64 bg-white flex-shrink-0 h-[calc(100vh-200px)] overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
                 <div
-                    class="flex flex-col items-center bg-indigo-100 border border-gray-200 w-full py-6 px-4 rounded-lg">
+                    class="flex flex-col items-center bg-indigo-100 border border-gray-200 w-full py-6 px-4 rounded-lg ">
                     <div class="h-20 w-20 rounded-full border overflow-hidden">
                         <img src="{{ auth()->user()->user_avatar }}" alt="Avatar" class="h-full w-full" />
                     </div>
@@ -44,7 +45,7 @@
                                     <img src="{{ $item->user_avatar }}" class="object-cover h-8 w-8 rounded-full"
                                         alt="" />
                                 </div>
-                                <div class="ml-2 text-sm font-semibold">
+                                <div class="ml-2 text-sm font-semibold truncate">
                                     @if ($item->to->id == auth()->user()->id)
                                         {{ $item->from->name }}
                                     @else
@@ -69,7 +70,7 @@
                                     <img src="{{ $user->user_avatar }}" class="object-cover h-8 w-8 rounded-full"
                                         alt="" />
                                 </div>
-                                <div class="ml-2 text-sm font-semibold">{{ $user->name }}</div>
+                                <div class="ml-2 text-sm font-semibold truncate">{{ $user->name }}</div>
                             </button>
                         @endforeach
                     </div>
@@ -308,7 +309,32 @@
         </div>
     </div>
 
-    @slot('scripts')
+    <x-slot name="head">
+        <style>
+            .scrollbar-w-2::-webkit-scrollbar {
+                width: 0.25rem;
+                height: 0.25rem;
+            }
+
+            .scrollbar-track-blue-lighter::-webkit-scrollbar-track {
+                --bg-opacity: 1;
+                background-color: #f7fafc;
+                background-color: rgba(247, 250, 252, var(--bg-opacity));
+            }
+
+            .scrollbar-thumb-blue::-webkit-scrollbar-thumb {
+                --bg-opacity: 1;
+                background-color: #edf2f7;
+                background-color: rgba(237, 242, 247, var(--bg-opacity));
+            }
+
+            .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
+                border-radius: 0.25rem;
+            }
+        </style>
+    </x-slot>
+
+    <x-slot name="footer">
         <script>
             window.livewire.on('conversation', (conversation) => {
                 window.Echo.channel(`message.${conversation.id}`).on('message.new', (response) => {
@@ -317,5 +343,5 @@
                 });
             });
         </script>
-    @endslot
+    </x-slot>
 </div>
