@@ -25,7 +25,7 @@ class LiveMessage extends Component
 
         if (!isset($this->conversation->id)) {
             $conversation = Conversation::create([
-                'from_user_id' => Auth::user()->getAuthIdentifier(),
+                'from_user_id' => Auth::id(),
                 'to_user_id' => $this->newUser->id
             ]);
             $conversation_id = $conversation->id;
@@ -35,7 +35,7 @@ class LiveMessage extends Component
 
         $message = Message::create([
             'conversation_id' => $conversation_id,
-            'user_id' => Auth::user()->getAuthIdentifier(),
+            'user_id' => Auth::id(),
             'message' => $this->newMessage
         ]);
 
@@ -62,8 +62,8 @@ class LiveMessage extends Component
     public function getConversationsProperty()
     {
         return Conversation::query()
-            ->where("from_user_id", Auth::user()->getAuthIdentifier())
-            ->orWhere("to_user_id", Auth::user()->getAuthIdentifier())
+            ->where("from_user_id", Auth::id())
+            ->orWhere("to_user_id", Auth::id())
             ->with(["from", "to"])
             ->withCount(["unread_message"])
             ->get();
@@ -93,6 +93,7 @@ class LiveMessage extends Component
     public function getUsersProperty()
     {
         $ids = array_merge(
+            [Auth::id()],
             $this->conversations->pluck('from_user_id')->toArray(),
             $this->conversations->pluck('to_user_id')->toArray()
         );
