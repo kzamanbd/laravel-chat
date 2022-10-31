@@ -3,61 +3,71 @@
 namespace App\Http\Livewire;
 
 use App\Events\SendNewMessage;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\View\View;
 use Livewire\Component;
-use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\MessageHistory;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class LiveMessage extends Component
 {
 
-    public $conversation, $newConversation, $newMessage, $conversation_id, $isSelectedConversation = false;
+    public $recentMessage, $newMessage, $messageText, $isSelectedMessage = false;
 
     protected $listeners = ['refreshMessage' => 'getMessage'];
 
-
-    public function sendMessage()
+    /**
+     * @return void
+     */
+    public function sendMessage(): void
     {
         $this->validate([
-            'newMessage' => 'required'
+            'messageText' => 'required'
         ]);
 
-        if (!isset($this->conversation->id)) {
-            $conversation = Conversation::create([
+        if (!isset($this->recentMessage->id)) {
+            $message = Message::create([
                 'from_user_id' => Auth::id(),
-                'to_user_id' => $this->newConversation->id
+                'to_user_id' => $this->newMessage->id
             ]);
-            $conversation_id = $conversation->id;
+            $message_id = $message->id;
         } else {
-            $conversation_id = $this->conversation->id;
+            $message_id = $this->recentMessage->id;
         }
 
-        $message = Message::create([
-            'conversation_id' => $conversation_id,
+        $messageHistory = MessageHistory::create([
+            'message_id' => $message_id,
             'user_id' => Auth::id(),
-            'message' => $this->newMessage
+            'message_text' => $this->messageText
         ]);
 
-        $this->newMessage = null;
+        $this->messageText = null;
 
-        broadcast(new SendNewMessage($message))->toOthers();
-        $this->getMessage($conversation_id);
+        broadcast(new SendNewMessage($messageHistory))->toOthers();
+        $this->getMessage($message_id);
     }
 
-
-    public function getMessage($id)
+    /**
+     * @param $id
+     * @return void
+     */
+    public function getMessage($id): void
     {
-        $this->isSelectedConversation = true;
-        $this->conversation = Conversation::with(["from", "to", "message"])->find($id);
+        $this->isSelectedMessage = true;
+        $this->recentMessage = Message::with(["from", "to", "message_history"])->find($id);
         $this->dispatchBrowserEvent('scroll-bottom');
-        $this->emit('conversation', $this->conversation);
+        $this->emit('connect-message', $this->recentMessage);
     }
 
-
-    public function getConversationsProperty()
+    /**
+     * @return Collection
+     */
+    public function getMessagesProperty(): Collection
     {
-        return Conversation::query()
+        return Message::query()
             ->where("from_user_id", Auth::id())
             ->orWhere("to_user_id", Auth::id())
             ->with(["from", "to"])
@@ -65,39 +75,55 @@ class LiveMessage extends Component
             ->get();
     }
 
-
-    public function updateMessage($id)
+    /**
+     * @param $id
+     * @return void
+     */
+    public function updateMessage($id): void
     {
-        Message::query()->where("conversation_id", $id)->update(["status" => 1]);
+        MessageHistory::query()->where("message_id", $id)->update(["status" => 1]);
     }
 
-    public function startNewConversation($id)
+    /**
+     * @param $id
+     * @return void
+     */
+    public function startNewMessage($id): void
     {
-        $this->conversation = null;
-        $this->isSelectedConversation = true;
-        $this->newConversation = User::find($id);
+        $this->recentMessage = null;
+        $this->isSelectedMessage = true;
+        $this->newMessage = User::find($id);
     }
 
-    public function hasNewMessage()
+    /**
+     * @return bool
+     */
+    public function hasNewMessage(): bool
     {
-        $conversation = Conversation::query()->whereHas('message', function ($query) {
+        $message = Message::query()->whereHas('message_history', function ($query) {
             return $query->where("status", "0");
         })->count();
 
-        return (bool)$conversation;
+        return (bool)$message;
     }
 
-    public function getUsersProperty()
+    /**
+     * @return Collection
+     */
+    public function getUsersProperty(): Collection
     {
         $ids = array_merge(
             [Auth::id()],
-            $this->conversations->pluck('from_user_id')->toArray(),
-            $this->conversations->pluck('to_user_id')->toArray()
+            $this->messages->pluck('from_user_id')->toArray(),
+            $this->messages->pluck('to_user_id')->toArray()
         );
         return User::query()->whereNotIn("id", $ids)->get();
     }
 
-    public function render()
+    /**
+     * @return View
+     */
+    public function render(): View
     {
         return view('livewire.live-message');
     }

@@ -33,12 +33,12 @@
                 </div>
                 <div class="flex flex-col mt-8">
                     <div class="flex flex-row items-center justify-between text-xs">
-                        <span class="font-bold">Active Conversations</span>
+                        <span class="font-bold">Recent Messages</span>
                         <span
-                            class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">{{ count([]) }}</span>
+                            class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">{{ count($this->messages) }}</span>
                     </div>
                     <div class="flex flex-col space-y-1 mt-4 -mx-2 overflow-y-auto">
-                        @foreach ($this->conversations as $item)
+                        @foreach ($this->messages as $item)
                             <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
                                 wire:click="getMessage({{ $item->id }})">
                                 <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
@@ -57,15 +57,15 @@
 
                     </div>
                     <div class="flex flex-row items-center justify-between text-xs pt-6">
-                        <span class="font-bold">Archivied</span>
+                        <span class="font-bold">Friends</span>
                         <span
-                            class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">{{ count([]) }}</span>
+                            class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">{{ count($this->users) }}</span>
                     </div>
                     <div class="flex flex-col space-y-1 mt-4 -mx-2 overflow-y-auto">
 
                         @foreach ($this->users as $user)
                             <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
-                                wire:click="startNewConversation({{ $user->id }})">
+                                wire:click="startNewMessage({{ $user->id }})">
                                 <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
                                     <img src="{{ $user->user_avatar }}" class="object-cover h-8 w-8 rounded-full"
                                         alt="" />
@@ -78,7 +78,7 @@
             </div>
 
             <div class="flex-1 sm:p-6 justify-between flex flex-col h-[calc(100vh-200px)] bg-gray-50">
-                @if ($isSelectedConversation)
+                @if ($isSelectedMessage)
                     <div class="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
                         <div class="relative flex items-center space-x-4">
                             <div class="relative">
@@ -88,21 +88,21 @@
                                         </circle>
                                     </svg>
                                 </span>
-                                @if ($conversation)
-                                    <img src="{{ $conversation->user_avatar }}" alt="Avatar" alt=""
+                                @if ($recentMessage)
+                                    <img src="{{ $recentMessage->user_avatar }}" alt="Avatar" alt=""
                                         class="w-10 sm:w-16 h-10 sm:h-16 rounded-full" />
                                 @else
-                                    <img src="{{ $newConversation->user_avatar }}" alt="Avatar" alt=""
+                                    <img src="{{ $newMessage->user_avatar }}" alt="Avatar" alt=""
                                         class="w-10 sm:w-16 h-10 sm:h-16 rounded-full" />
                                 @endif
                             </div>
                             <div class="flex flex-col leading-tight">
                                 <div class="text-2xl mt-1 flex items-center">
                                     <span class="text-gray-700 mr-3">
-                                        @if ($conversation)
-                                            {{ auth()->user()->id == $conversation->to_user_id ? $conversation->from->name : $conversation->to->name }}
+                                        @if ($recentMessage)
+                                            {{ auth()->id() == $recentMessage->to_user_id ? $recentMessage->from->name : $recentMessage->to->name }}
                                         @else
-                                            {{ $newConversation->name }}
+                                            {{ $newMessage->name }}
                                         @endif
                                     </span>
                                 </div>
@@ -139,11 +139,11 @@
                         </div>
                     </div>
 
-                    @if ($conversation)
+                    @if ($recentMessage)
                         <div id="messages" x-data="{ scroll: () => { $el.scrollTo(0, $el.scrollHeight); } }" x-init="scroll()"
                             @scroll-bottom.window="scroll()"
                             class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
-                            @forelse ($conversation->message as $message)
+                            @forelse ($recentMessage->message_history as $message)
                                 @if (auth()->user()->id != $message->user_id)
                                     <div class="chat-message">
                                         <div class="flex items-end">
@@ -152,11 +152,11 @@
                                                 <div>
                                                     <span
                                                         class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
-                                                        {{ $message->message }}
+                                                        {{ $message->message_text }}
                                                     </span>
                                                 </div>
                                             </div>
-                                            <img src="https://ui-avatars.com/api/?background=random&name={{ $conversation->to->name }}"
+                                            <img src="https://ui-avatars.com/api/?background=random&name={{ $recentMessage->to->name }}"
                                                 alt="My profile" class="w-6 h-6 rounded-full order-1" />
                                         </div>
                                     </div>
@@ -168,7 +168,7 @@
                                                 <div>
                                                     <span
                                                         class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white">
-                                                        {{ $message->message }}
+                                                        {{ $message->message_text }}
                                                     </span>
                                                 </div>
                                             </div>
@@ -185,7 +185,7 @@
                                 </div>
                             @endforelse
                         </div>
-                    @elseif($newConversation)
+                    @elseif($newMessage)
                         <div class="w-full px-5 flex flex-col justify-center h-full">
                             <div class="flex justify-center">
                                 No Previous message, You can start new conversation
@@ -206,7 +206,7 @@
                                     </svg>
                                 </button>
                             </span>
-                            <input type="text" placeholder="Write your message!" wire:model.lazy="newMessage"
+                            <input type="text" placeholder="Write your message!" wire:model.lazy="messageText"
                                 wire:keydown.enter="sendMessage()"
                                 class="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3" />
                             <div class="absolute right-0 items-center inset-y-0 hidden sm:flex">
@@ -290,10 +290,10 @@
 
     <x-slot name="footer">
         <script>
-            window.livewire.on('conversation', (conversation) => {
-                window.Echo.channel(`message.${conversation.id}`).on('message.new', (response) => {
+            window.livewire.on('connect-message', (message) => {
+                window.Echo.channel(`message.${message.id}`).on('message.new', (response) => {
                     console.log(response);
-                    window.livewire.emit('refreshMessage', conversation.id);
+                    window.livewire.emit('refreshMessage', message.id);
                 });
             });
         </script>

@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Message;
+use App\Models\MessageHistory;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -22,7 +22,7 @@ class SendNewMessage implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(Message $message)
+    public function __construct(MessageHistory $message)
     {
         $this->message = $message;
     }
@@ -34,7 +34,7 @@ class SendNewMessage implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel("message.{$this->message->conversation_id}");
+        return new Channel("message.{$this->message->message_id}");
     }
 
     public function broadcastAs()
