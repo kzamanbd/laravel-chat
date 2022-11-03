@@ -31,7 +31,7 @@ class Conversation extends Model
 
     public function unread_message(): HasMany
     {
-        return $this->hasMany(Message::class, "conversation_id", "id")->where("status", "0");
+        return $this->hasMany(Message::class, "conversation_id", "id")->where("is_seen", 0);
     }
 
     public function getUserAvatarAttribute(): string

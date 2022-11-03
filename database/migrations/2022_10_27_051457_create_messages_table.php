@@ -18,11 +18,14 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->constrained()
                 ->onDelete('cascade');
+
             $table->foreignId('conversation_id')
                 ->constrained()
                 ->onDelete('cascade');
+
             $table->text('message_text');
-            $table->boolean('status')->default(false)->comment('false = unread, true = read');
+            $table->boolean('is_seen')->default(false)->comment('false = unread, true = read');
+            $table->string('type')->default('text')->comment('text, image, video, audio, file');
             $table->timestamps();
         });
     }

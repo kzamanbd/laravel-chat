@@ -99,7 +99,7 @@ class LiveMessage extends Component
     public function hasNewMessage(): bool
     {
         $message = Conversation::query()->whereHas('messages', function ($query) {
-            return $query->where("status", "0");
+            return $query->where("is_seen", 0);
         })->count();
 
         return (bool)$message;
