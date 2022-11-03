@@ -38,11 +38,18 @@
                     </div>
                     <div class="flex flex-col space-y-1 mt-4 -mx-2 overflow-y-auto">
                         @foreach ($this->conversations as $item)
-                            <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
+                            <button
+                                class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2 {{ isset($this->conversation) && $item->id == $this->conversation->id ? 'bg-gray-100' : '' }}"
                                 wire:click="getMessage({{ $item->id }})">
-                                <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
+                                <div class="flex items-center justify-center h-8 w-8 rounded-full relative">
                                     <img src="{{ $item->user_avatar }}" class="object-cover h-8 w-8 rounded-full"
                                         alt="" />
+                                    @if ($item->unread_message_count > 0)
+                                        <span
+                                            class="absolute left-0 top-[-5px] flex items-center justify-center bg-red-500 text-white p-0.5 h-4 w-4 rounded-full text-xs">
+                                            {{ $item->unread_message_count }}
+                                        </span>
+                                    @endif
                                 </div>
                                 <div class="ml-2 text-sm font-semibold truncate">
                                     @if ($item->to->id == auth()->user()->id)

@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Events\SendNewMessage;
+use App\Events\MessageCreated;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
@@ -43,10 +43,8 @@ class LiveMessage extends Component
             'user_id' => Auth::id(),
             'message_text' => $this->messageText
         ]);
-
+        broadcast(new MessageCreated($message))->toOthers();
         $this->messageText = null;
-
-        broadcast(new SendNewMessage($message))->toOthers();
         $this->getMessage($conversation_id);
     }
 
@@ -79,7 +77,7 @@ class LiveMessage extends Component
      * @param $id
      * @return void
      */
-    public function updateMessage($id): void
+    public function updateMessageStatus($id): void
     {
         Message::query()->where("conversation_id", $id)->update(["status" => 1]);
     }
