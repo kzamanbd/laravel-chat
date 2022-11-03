@@ -1,18 +1,22 @@
 <div>
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-row h-full w-full" x-data="{ isMenuOpen: false }">
-            <aside
-                class="flex flex-col p-6 w-64 bg-white flex-shrink-0 h-[calc(100vh-200px)] overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
-                <div class="flex flex-col items-center bg-indigo-100 border border-gray-200 w-full py-6 px-4 rounded-lg">
-                    <div class="h-20 w-20 rounded-full border overflow-hidden">
-                        <img src="{{ auth()->user()->user_avatar }}" alt="Avatar" class="h-full w-full" />
-                    </div>
-                    <div class="text-sm font-semibold mt-2">{{ auth()->user()->name }}</div>
-                    <div class="flex flex-row items-center mt-3">
-                        <div class="flex flex-col justify-center h-4 w-8 bg-indigo-500 rounded-full">
-                            <div class="h-3 w-3 bg-white rounded-full self-end mr-1"></div>
+    <div class="py-4" x-data="{ isMenuOpen: false }">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-row h-full w-full overflow-hidden relative">
+            <div tabindex="0" role="button" @click="isMenuOpen = false" :class="isMenuOpen ? 'block' : 'hidden'"
+                class="fixed inset-0 z-10 transition-opacity bg-black opacity-50 lg:hidden"></div>
+            <aside :class="isMenuOpen ? 'translate-x-0' : '-translate-x-full'"
+                class="fixed z-10 top-[80px] lg:static lg:inset-0 lg:translate-x-0 flex flex-col p-6 w-80 bg-white flex-shrink-0 h-[calc(100vh-100px)] overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
+                <div class="flex items-center bg-indigo-100 border border-gray-200 w-full py-6 px-4 rounded-lg">
+                    <img src="{{ auth()->user()->user_avatar }}" alt="Avatar"
+                        class="h-16 w-16 rounded-full border overflow-hidden object-cover" />
+
+                    <div class="ml-3">
+                        <div class="text-sm font-semibold">{{ auth()->user()->name }}</div>
+                        <div class="flex items-center">
+                            <div class="flex flex-col justify-center h-4 w-8 bg-indigo-500 rounded-full">
+                                <div class="h-3 w-3 bg-white rounded-full self-end mr-1"></div>
+                            </div>
+                            <div class="leading-none ml-1 text-xs">Active</div>
                         </div>
-                        <div class="leading-none ml-1 text-xs">Active</div>
                     </div>
                 </div>
                 <div class="flex flex-col mt-8">
@@ -68,7 +72,17 @@
                 </div>
             </aside>
 
-            <div class="flex-1 p-6 justify-between flex flex-col h-[calc(100vh-200px)] bg-gray-50">
+            <div class="flex-1 p-6 justify-between flex flex-col h-[calc(100vh-100px)] bg-gray-50">
+                <button @click="isMenuOpen = ! isMenuOpen"
+                    class="lg:hidden inline-flex items-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path :class="{ 'hidden': isMenuOpen, 'inline-flex': !isMenuOpen }" class="inline-flex"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                        <path :class="{ 'hidden': !isMenuOpen, 'inline-flex': isMenuOpen }" class="hidden"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
                 @if ($isSelected)
                     <div class="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
                         <div class="relative flex items-center space-x-4">
@@ -133,7 +147,7 @@
                     @if ($conversation)
                         <div id="messages" x-data="{ scroll: () => { $el.scrollTo(0, $el.scrollHeight); } }" x-init="scroll()"
                             @scroll-bottom.window="scroll()"
-                            class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+                            class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
                             @forelse ($conversation->messages as $message)
                                 @if (auth()->user()->id != $message->user_id)
                                     <div class="chat-message">
