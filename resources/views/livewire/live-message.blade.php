@@ -14,12 +14,11 @@
     </x-slot>
 
     <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-row h-full w-full">
-
-            <div
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-row h-full w-full" x-data="{ isMenuOpen: false }">
+            <aside
                 class="flex flex-col p-6 w-64 bg-white flex-shrink-0 h-[calc(100vh-200px)] overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
                 <div
-                    class="flex flex-col items-center bg-indigo-100 border border-gray-200 w-full py-6 px-4 rounded-lg ">
+                    class="flex flex-col items-center bg-indigo-100 border border-gray-200 w-full py-6 px-4 rounded-lg">
                     <div class="h-20 w-20 rounded-full border overflow-hidden">
                         <img src="{{ auth()->user()->user_avatar }}" alt="Avatar" class="h-full w-full" />
                     </div>
@@ -35,10 +34,10 @@
                     <div class="flex flex-row items-center justify-between text-xs">
                         <span class="font-bold">Recent Messages</span>
                         <span
-                            class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">{{ count($this->messages) }}</span>
+                            class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">{{ count($this->conversations) }}</span>
                     </div>
                     <div class="flex flex-col space-y-1 mt-4 -mx-2 overflow-y-auto">
-                        @foreach ($this->messages as $item)
+                        @foreach ($this->conversations as $item)
                             <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
                                 wire:click="getMessage({{ $item->id }})">
                                 <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
@@ -75,10 +74,10 @@
                         @endforeach
                     </div>
                 </div>
-            </div>
+            </aside>
 
-            <div class="flex-1 sm:p-6 justify-between flex flex-col h-[calc(100vh-200px)] bg-gray-50">
-                @if ($isSelectedMessage)
+            <div class="flex-1 p-6 justify-between flex flex-col h-[calc(100vh-200px)] bg-gray-50">
+                @if ($isSelected)
                     <div class="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
                         <div class="relative flex items-center space-x-4">
                             <div class="relative">
@@ -88,8 +87,8 @@
                                         </circle>
                                     </svg>
                                 </span>
-                                @if ($recentMessage)
-                                    <img src="{{ $recentMessage->user_avatar }}" alt="Avatar" alt=""
+                                @if ($conversation)
+                                    <img src="{{ $conversation->user_avatar }}" alt="Avatar" alt=""
                                         class="w-10 sm:w-16 h-10 sm:h-16 rounded-full" />
                                 @else
                                     <img src="{{ $newMessage->user_avatar }}" alt="Avatar" alt=""
@@ -99,8 +98,8 @@
                             <div class="flex flex-col leading-tight">
                                 <div class="text-2xl mt-1 flex items-center">
                                     <span class="text-gray-700 mr-3">
-                                        @if ($recentMessage)
-                                            {{ auth()->id() == $recentMessage->to_user_id ? $recentMessage->from->name : $recentMessage->to->name }}
+                                        @if ($conversation)
+                                            {{ auth()->id() == $conversation->to_user_id ? $conversation->from->name : $conversation->to->name }}
                                         @else
                                             {{ $newMessage->name }}
                                         @endif
@@ -139,11 +138,11 @@
                         </div>
                     </div>
 
-                    @if ($recentMessage)
+                    @if ($conversation)
                         <div id="messages" x-data="{ scroll: () => { $el.scrollTo(0, $el.scrollHeight); } }" x-init="scroll()"
                             @scroll-bottom.window="scroll()"
                             class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
-                            @forelse ($recentMessage->message_history as $message)
+                            @forelse ($conversation->messages as $message)
                                 @if (auth()->user()->id != $message->user_id)
                                     <div class="chat-message">
                                         <div class="flex items-end">
@@ -156,7 +155,7 @@
                                                     </span>
                                                 </div>
                                             </div>
-                                            <img src="https://ui-avatars.com/api/?background=random&name={{ $recentMessage->to->name }}"
+                                            <img src="https://ui-avatars.com/api/?background=random&name={{ $conversation->to->name }}"
                                                 alt="My profile" class="w-6 h-6 rounded-full order-1" />
                                         </div>
                                     </div>
@@ -209,6 +208,7 @@
                             <input type="text" placeholder="Write your message!" wire:model.lazy="messageText"
                                 wire:keydown.enter="sendMessage()"
                                 class="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3" />
+
                             <div class="absolute right-0 items-center inset-y-0 hidden sm:flex">
                                 <button type="button"
                                     class="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
@@ -251,6 +251,7 @@
                                 </button>
                             </div>
                         </div>
+                        <x-input-error :messages="$errors->get('messageText')" class="mt-2" />
                     </div>
                 @else
                     <div class="w-full px-5 flex flex-col justify-center h-full">

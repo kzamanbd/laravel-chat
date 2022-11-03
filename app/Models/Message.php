@@ -4,39 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Message extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
-    protected $appends = ["user_avatar"];
 
-    public function from(): HasOne
+    protected $appends = ["send_at"];
+
+    public function getSendAtAttribute(): string
     {
-        return $this->hasOne(User::class, "id", "from_user_id");
+        return $this->created_at->diffForHumans();
     }
 
-    public function to(): HasOne
+    public function conversation(): BelongsTo
     {
-        return $this->hasOne(User::class, "id", "to_user_id");
-    }
-
-    public function message_history(): HasMany
-    {
-        return $this->hasMany(MessageHistory::class, "message_id", "id");
-    }
-
-    public function unread_message(): HasMany
-    {
-        return $this->hasMany(MessageHistory::class, "message_id", "id")->where("status", "0");
-    }
-
-    public function getUserAvatarAttribute()
-    {
-        $name = $this->to->id == auth()->id() ? $this->from->name : $this->to->name;
-        return "https://ui-avatars.com/api/?background=random&name=$name";
+        return $this->belongsTo(Conversation::class, "conversation_id", "id");
     }
 }

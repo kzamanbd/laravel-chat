@@ -13,15 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('message_histories', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
                 ->constrained()
                 ->onDelete('cascade');
-            $table->foreignId('message_id')
+            $table->foreignId('conversation_id')
                 ->constrained()
                 ->onDelete('cascade');
-            $table->string('message_text');
+            $table->text('message_text');
             $table->boolean('status')->default(false)->comment('false = unread, true = read');
             $table->timestamps();
         });
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('message_histories');
+        Schema::dropIfExists('messages');
     }
 };

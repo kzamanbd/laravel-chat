@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
+use App\Models\Conversation;
 use App\Models\Message;
-use App\Models\MessageHistory;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class LiveMessage extends Component
 {
 
-    public $recentMessage, $newMessage, $messageText, $isSelectedMessage = false;
+    public $conversation, $newMessage, $messageText, $isSelected = false;
 
     protected $listeners = ['refreshMessage' => 'getMessage'];
 
@@ -28,26 +28,26 @@ class LiveMessage extends Component
             'messageText' => 'required'
         ]);
 
-        if (!isset($this->recentMessage->id)) {
-            $message = Message::create([
+        if (!isset($this->conversation->id)) {
+            $conversation = Conversation::create([
                 'from_user_id' => Auth::id(),
                 'to_user_id' => $this->newMessage->id
             ]);
-            $message_id = $message->id;
+            $conversation_id = $conversation->id;
         } else {
-            $message_id = $this->recentMessage->id;
+            $conversation_id = $this->conversation->id;
         }
 
-        $messageHistory = MessageHistory::create([
-            'message_id' => $message_id,
+        $message = Message::create([
+            'conversation_id' => $conversation_id,
             'user_id' => Auth::id(),
             'message_text' => $this->messageText
         ]);
 
         $this->messageText = null;
 
-        broadcast(new SendNewMessage($messageHistory))->toOthers();
-        $this->getMessage($message_id);
+        broadcast(new SendNewMessage($message))->toOthers();
+        $this->getMessage($conversation_id);
     }
 
     /**
@@ -56,18 +56,18 @@ class LiveMessage extends Component
      */
     public function getMessage($id): void
     {
-        $this->isSelectedMessage = true;
-        $this->recentMessage = Message::with(["from", "to", "message_history"])->find($id);
+        $this->isSelected = true;
+        $this->conversation = Conversation::with(["from", "to", "messages"])->find($id);
         $this->dispatchBrowserEvent('scroll-bottom');
-        $this->emit('connect-message', $this->recentMessage);
+        $this->emit('connect-message', $this->conversation);
     }
 
     /**
      * @return Collection
      */
-    public function getMessagesProperty(): Collection
+    public function getConversationsProperty(): Collection
     {
-        return Message::query()
+        return Conversation::query()
             ->where("from_user_id", Auth::id())
             ->orWhere("to_user_id", Auth::id())
             ->with(["from", "to"])
@@ -81,7 +81,7 @@ class LiveMessage extends Component
      */
     public function updateMessage($id): void
     {
-        MessageHistory::query()->where("message_id", $id)->update(["status" => 1]);
+        Message::query()->where("conversation_id", $id)->update(["status" => 1]);
     }
 
     /**
@@ -90,8 +90,8 @@ class LiveMessage extends Component
      */
     public function startNewMessage($id): void
     {
-        $this->recentMessage = null;
-        $this->isSelectedMessage = true;
+        $this->conversation = null;
+        $this->isSelected = true;
         $this->newMessage = User::find($id);
     }
 
@@ -100,7 +100,7 @@ class LiveMessage extends Component
      */
     public function hasNewMessage(): bool
     {
-        $message = Message::query()->whereHas('message_history', function ($query) {
+        $message = Conversation::query()->whereHas('messages', function ($query) {
             return $query->where("status", "0");
         })->count();
 
@@ -114,8 +114,8 @@ class LiveMessage extends Component
     {
         $ids = array_merge(
             [Auth::id()],
-            $this->messages->pluck('from_user_id')->toArray(),
-            $this->messages->pluck('to_user_id')->toArray()
+            $this->conversations->pluck('from_user_id')->toArray(),
+            $this->conversations->pluck('to_user_id')->toArray()
         );
         return User::query()->whereNotIn("id", $ids)->get();
     }
