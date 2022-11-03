@@ -59,7 +59,8 @@
                     <div class="flex flex-col space-y-1 mt-4 -mx-2 overflow-y-auto">
 
                         @foreach ($this->users as $user)
-                            <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
+                            <button
+                                class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2 {{ isset($this->newMessage) && $user->id == $this->newMessage->id ? 'bg-gray-100' : '' }}"
                                 wire:click="startNewMessage({{ $user->id }})">
                                 <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
                                     <img src="{{ $user->user_avatar }}" class="object-cover h-8 w-8 rounded-full"
@@ -297,12 +298,19 @@
 
     <x-slot name="footer">
         <script>
-            window.livewire.on('connect-message', (message) => {
+            window.livewire.on('connected-to-message', (message) => {
                 window.Echo.channel(`message.${message.id}`).on('message.new', (response) => {
                     console.log(response);
                     window.livewire.emit('refreshMessage', message.id);
                 });
             });
+            window.onload = function() {
+                window.Echo.channel('conversation.{{ auth()->id() }}').on('conversation.new', (response) => {
+                    console.log(response);
+                    window.livewire.emit('refreshConversation');
+                    window.livewire.emit('connected-to-message', response.conversation);
+                });
+            }
         </script>
     </x-slot>
 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\ConversationCreated;
 use App\Events\MessageCreated;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,7 +18,10 @@ class LiveMessage extends Component
 
     public $conversation, $newMessage, $messageText, $isSelected = false;
 
-    protected $listeners = ['refreshMessage' => 'getMessage'];
+    protected $listeners = [
+        'refreshMessage' => 'getMessage',
+        'refreshConversation' => 'getConversationsProperty',
+    ];
 
     /**
      * @return void
@@ -34,6 +38,7 @@ class LiveMessage extends Component
                 'to_user_id' => $this->newMessage->id
             ]);
             $conversation_id = $conversation->id;
+            broadcast(new ConversationCreated($conversation))->toOthers();
         } else {
             $conversation_id = $this->conversation->id;
         }
@@ -57,7 +62,7 @@ class LiveMessage extends Component
         $this->isSelected = true;
         $this->conversation = Conversation::with(["from", "to", "messages"])->find($id);
         $this->dispatchBrowserEvent('scroll-bottom');
-        $this->emit('connect-message', $this->conversation);
+        $this->emit('connected-to-message', $this->conversation);
     }
 
     /**
