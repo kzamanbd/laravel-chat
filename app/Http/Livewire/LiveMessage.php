@@ -60,6 +60,7 @@ class LiveMessage extends Component
     public function getMessage($id): void
     {
         $this->isSelected = true;
+        $this->newMessage = null;
         $this->conversation = Conversation::with(["from", "to", "messages"])->find($id);
         $this->dispatchBrowserEvent('scroll-bottom');
         $this->emit('connected-to-message', $this->conversation);
