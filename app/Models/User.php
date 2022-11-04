@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class User extends Authenticatable
 {
@@ -49,8 +50,11 @@ class User extends Authenticatable
         return "https://ui-avatars.com/api/?background=random&name=$name";
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function getIsOnlineAttribute(): bool
     {
-        return cache()->has('user-activity-' . $this->id);
+        return cache()->has("is-online-$this->id");
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class Conversation extends Model
 {
@@ -38,12 +39,16 @@ class Conversation extends Model
 
     public function getUserAvatarAttribute(): string
     {
-        $name = $this->to->id == auth()->id() ? urlencode($this->from->name) : urlencode($this->to->name);
+        $name = $this->to_user_id == auth()->id() ? urlencode($this->from->name) : urlencode($this->to->name);
         return "https://ui-avatars.com/api/?background=random&name=$name";
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function getIsOnlineAttribute(): bool
     {
-        return cache()->has('user-activity-' . $this->from_user_id);
+        $key = $this->to_user_id == auth()->id() ? $this->from_user_id : $this->to_user_id;
+        return cache()->has("is-online-$key");
     }
 }

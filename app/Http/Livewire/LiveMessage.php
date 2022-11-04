@@ -4,7 +4,6 @@ namespace App\Http\Livewire;
 
 use App\Events\ConversationCreated;
 use App\Events\MessageCreated;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
