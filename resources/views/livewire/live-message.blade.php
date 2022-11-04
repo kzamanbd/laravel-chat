@@ -12,7 +12,7 @@
                         stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <aside :class="isMenuOpen ? 'translate-x-0' : '-translate-x-full -ml-10'"
+            <aside :class="isMenuOpen ? 'translate-x-0' : '-translate-x-full -ml-10 lg:ml-0'"
                 class="fixed z-10 top-[80px] lg:static lg:inset-0 lg:translate-x-0 duration-300 flex flex-col p-6 w-80 bg-white flex-shrink-0 h-[calc(100vh-100px)] rounded-md lg:rounded-none overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
                 <div class="flex items-center bg-indigo-100 border border-gray-200 w-full py-6 px-4 rounded-lg">
                     <img src="{{ auth()->user()->user_avatar }}" alt="Avatar"
