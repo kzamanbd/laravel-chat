@@ -308,7 +308,6 @@
                 window.Echo.channel('conversation.{{ auth()->id() }}').on('conversation.new', (response) => {
                     console.log(response);
                     window.livewire.emit('refreshConversation');
-                    window.livewire.emit('connected-to-message', response.conversation);
                 });
             }
         </script>
