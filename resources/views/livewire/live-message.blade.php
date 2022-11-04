@@ -48,6 +48,11 @@
                                             {{ $item->unread_message_count }}
                                         </span>
                                     @endif
+                                    @if ($item->is_online)
+                                        <span
+                                            class="flex absolute bottom-0 right-0 justify-center items-center w-2 h-2  bg-green-500 rounded-full">
+                                        </span>
+                                    @endif
                                 </div>
                                 <div class="ml-2 text-sm font-semibold truncate">
                                     @if ($item->to->id == auth()->user()->id)
@@ -71,9 +76,15 @@
                             <button
                                 class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2 {{ isset($this->newMessage) && $user->id == $this->newMessage->id ? 'bg-gray-100' : '' }}"
                                 wire:click="startNewMessage({{ $user->id }})">
-                                <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
+                                <div
+                                    class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full relative">
                                     <img src="{{ $user->user_avatar }}" class="object-cover h-8 w-8 rounded-full"
                                         alt="" />
+                                    @if ($user->is_online)
+                                        <span
+                                            class="flex absolute bottom-0 right-0 justify-center items-center w-2 h-2  bg-green-500 rounded-full">
+                                        </span>
+                                    @endif
                                 </div>
                                 <div class="ml-2 text-sm font-semibold truncate">{{ $user->name }}</div>
                             </button>
@@ -88,12 +99,14 @@
                     <div class="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
                         <div class="relative flex items-center space-x-4">
                             <div class="relative">
-                                <span class="absolute text-green-500 right-0 bottom-0">
-                                    <svg width="20" height="20">
-                                        <circle cx="8" cy="8" r="8" fill="currentColor">
-                                        </circle>
-                                    </svg>
-                                </span>
+                                @if ($conversation->is_online)
+                                    <span class="absolute text-green-500 right-0 bottom-0">
+                                        <svg width="20" height="20">
+                                            <circle cx="8" cy="8" r="8" fill="currentColor">
+                                            </circle>
+                                        </svg>
+                                    </span>
+                                @endif
                                 @if ($conversation)
                                     <img src="{{ $conversation->user_avatar }}" alt="Avatar" alt=""
                                         class="w-10 sm:w-16 h-10 sm:h-16 rounded-full" />
@@ -217,26 +230,17 @@
                                 class="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3" />
 
                             <div class="absolute right-0 items-center inset-y-0 hidden sm:flex">
-                                <button type="button"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
+                                <label for="dropzone-file"
+                                    class="inline-flex items-center justify-center rounded-full cursor-pointer h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor" class="h-6 w-6 text-gray-600">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
                                         </path>
                                     </svg>
-                                </button>
-                                <button type="button"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor" class="h-6 w-6 text-gray-600">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
-                                        </path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                </button>
+                                    <input id="dropzone-file" type="file" class="hidden" />
+                                </label>
+
                                 <button type="button"
                                     class="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

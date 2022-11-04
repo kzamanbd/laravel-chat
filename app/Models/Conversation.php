@@ -12,7 +12,7 @@ class Conversation extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $appends = ['user_avatar'];
+    protected $appends = ['user_avatar', 'is_online'];
 
     public function from(): HasOne
     {
@@ -40,5 +40,10 @@ class Conversation extends Model
     {
         $name = $this->to->id == auth()->id() ? urlencode($this->from->name) : urlencode($this->to->name);
         return "https://ui-avatars.com/api/?background=random&name=$name";
+    }
+
+    public function getIsOnlineAttribute(): bool
+    {
+        return cache()->has('user-activity-' . $this->to->id);
     }
 }

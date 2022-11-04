@@ -12,7 +12,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $appends = ["user_avatar"];
+    protected $appends = ['user_avatar', 'is_online'];
     /**
      * The attributes that are mass assignable.
      *
@@ -47,5 +47,10 @@ class User extends Authenticatable
     {
         $name = urlencode($this->name);
         return "https://ui-avatars.com/api/?background=random&name=$name";
+    }
+
+    public function getIsOnlineAttribute(): bool
+    {
+        return cache()->has('user-activity-' . $this->id);
     }
 }
