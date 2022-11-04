@@ -44,6 +44,6 @@ class Conversation extends Model
 
     public function getIsOnlineAttribute(): bool
     {
-        return cache()->has('user-activity-' . $this->to->id);
+        return cache()->has('user-activity-' . $this->from_user_id);
     }
 }
