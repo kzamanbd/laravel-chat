@@ -32,7 +32,7 @@
                 <div class="border-b border-gray-200 dark:border-gray-700">
                     <ul class="flex flex-wrap -mb-px text-sm font-medium justify-center text-gray-500">
                         <li class="mr-2">
-                            <a href="#"
+                            <button type="button"
                                 class="inline-flex p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
                                 <svg aria-hidden="true"
                                     class="mr-2 w-5 h-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300"
@@ -43,12 +43,11 @@
                                     </path>
                                 </svg>
                                 People
-                            </a>
+                            </button>
                         </li>
                         <li class="mr-2">
-                            <a href="#"
-                                class="inline-flex p-4 text-blue-600 rounded-t-lg border-b-2 border-blue-600 active dark:text-blue-500 dark:border-blue-500 group"
-                                aria-current="page">
+                            <button type="button" aria-current="page"
+                                class="inline-flex p-4 text-blue-600 rounded-t-lg border-b-2 border-blue-600 active dark:text-blue-500 dark:border-blue-500 group">
                                 <svg aria-hidden="true" class="mr-2 w-5 h-5 text-blue-600 dark:text-blue-500"
                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -56,22 +55,24 @@
                                     </path>
                                 </svg>
                                 Groups
-                            </a>
+                            </button>
                         </li>
                     </ul>
                 </div>
 
-                <div class="flex flex-col mt-8">
-                    <div class="flex flex-row items-center justify-between text-xs">
-                        <span class="font-bold">Recent Messages</span>
-                        <span
-                            class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">{{ count($this->conversations) }}</span>
-                    </div>
+                <div class="flex flex-col">
+                    @if (count($this->conversations))
+                        <div class="flex flex-row items-center justify-between text-xs mt-8">
+                            <span class="font-bold">Recent Messages</span>
+                            <span class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">
+                                {{ count($this->conversations) }}
+                            </span>
+                        </div>
+                    @endif
                     <div class="flex flex-col space-y-1 mt-4 -mx-2 overflow-y-auto">
                         @foreach ($this->conversations as $item)
-                            <button
-                                class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2 {{ isset($this->conversation) && $item->id == $this->conversation->id ? 'bg-gray-100' : '' }}"
-                                wire:click="getMessage({{ $item->id }})">
+                            <button type="button" wire:click="getMessage({{ $item->id }})"
+                                class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2 @if (isset($conversation) && $conversation->id == $item->id) bg-gray-100 @endif">
                                 <div class="flex items-center justify-center h-8 w-8 rounded-full relative">
                                     <img src="{{ $item->user_avatar }}" class="object-cover h-8 w-8 rounded-full"
                                         alt="" />
@@ -100,15 +101,14 @@
                     </div>
                     <div class="flex flex-row items-center justify-between text-xs pt-6">
                         <span class="font-bold">Friends</span>
-                        <span
-                            class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">{{ count($this->users) }}</span>
+                        <span class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">
+                            {{ count($this->users) }}
+                        </span>
                     </div>
-                    <div class="flex flex-col space-y-1 mt-4 -mx-2 overflow-y-auto">
-
+                    <div class="flex flex-col space-y-1 -mx-2 overflow-y-auto">
                         @foreach ($this->users as $user)
-                            <button
-                                class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2 {{ isset($this->newMessage) && $user->id == $this->newMessage->id ? 'bg-gray-100' : '' }}"
-                                wire:click="startNewMessage({{ $user->id }})">
+                            <button type="button" wire:click="startNewMessage({{ $user->id }})"
+                                class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2 @if (isset($newMessage->id) && $newMessage->id == $user->id) bg-gray-100 @endif">
                                 <div
                                     class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full relative">
                                     <img src="{{ $user->user_avatar }}" class="object-cover h-8 w-8 rounded-full"
