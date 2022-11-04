@@ -39,6 +39,6 @@ class ConversationCreated implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'conversation.new';
+        return 'conversation.created';
     }
 }

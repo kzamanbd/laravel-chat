@@ -63,6 +63,7 @@ class LiveMessage extends Component
         $this->conversation = Conversation::with(["from", "to", "messages"])->find($id);
         $this->dispatchBrowserEvent('scroll-bottom');
         $this->emit('connected-to-message', $this->conversation);
+        $this->updateMessageStatus($id);
     }
 
     /**
@@ -74,7 +75,7 @@ class LiveMessage extends Component
             ->where("from_user_id", Auth::id())
             ->orWhere("to_user_id", Auth::id())
             ->with(["from", "to"])
-            ->withCount(["unread_message"])
+            ->withCount(["unreadMessage"])
             ->get();
     }
 
@@ -84,7 +85,10 @@ class LiveMessage extends Component
      */
     public function updateMessageStatus($id): void
     {
-        Message::query()->where("conversation_id", $id)->update(["status" => 1]);
+        Message::query()
+            ->where("conversation_id", $id)
+            ->where("user_id", "!=", Auth::id())
+            ->update(["is_seen" => 1]);
     }
 
     /**

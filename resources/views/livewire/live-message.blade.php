@@ -299,14 +299,14 @@
     <x-slot name="footer">
         <script>
             window.livewire.on('connected-to-message', (message) => {
-                window.Echo.channel(`message.${message.id}`).on('message.new', (response) => {
-                    console.log(response);
+                window.Echo.channel(`message.${message.id}`).on('message.created', (response) => {
+                    console.log('connected-message', response);
                     window.livewire.emit('refreshMessage', message.id);
                 });
             });
             window.onload = function() {
-                window.Echo.channel('conversation.{{ auth()->id() }}').on('conversation.new', (response) => {
-                    console.log(response);
+                window.Echo.channel('conversation.{{ auth()->id() }}').on('conversation.created', (response) => {
+                    console.log('conversation.created', response);
                     window.livewire.emit('refreshConversation');
                 });
             }

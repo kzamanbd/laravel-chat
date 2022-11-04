@@ -12,15 +12,8 @@ class Message extends Model
 
     protected $guarded = [];
 
-    protected $appends = ["send_at"];
-
-    public function getSendAtAttribute(): string
-    {
-        return $this->created_at->diffForHumans();
-    }
-
     public function conversation(): BelongsTo
     {
-        return $this->belongsTo(Conversation::class, "conversation_id", "id");
+        return $this->belongsTo(Conversation::class, 'conversation_id', 'id');
     }
 }
