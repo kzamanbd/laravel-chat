@@ -3,8 +3,17 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-row h-full w-full overflow-hidden relative">
             <div tabindex="0" role="button" @click="isMenuOpen = false" :class="isMenuOpen ? 'block' : 'hidden'"
                 class="fixed inset-0 z-10 transition-opacity bg-black opacity-50 lg:hidden"></div>
-            <aside :class="isMenuOpen ? 'translate-x-0' : '-translate-x-full'"
-                class="fixed z-10 top-[80px] lg:static lg:inset-0 lg:translate-x-0 flex flex-col p-6 w-80 bg-white flex-shrink-0 h-[calc(100vh-100px)] overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
+            <button @click="isMenuOpen = ! isMenuOpen"
+                class=" absolute left-8 top-3 lg:hidden inline-flex items-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path :class="{ 'hidden': isMenuOpen, 'inline-flex': !isMenuOpen }" class="inline-flex"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    <path :class="{ 'hidden': !isMenuOpen, 'inline-flex': isMenuOpen }" class="hidden"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <aside :class="isMenuOpen ? 'translate-x-0' : '-translate-x-full -ml-10'"
+                class="fixed z-10 top-[80px] lg:static lg:inset-0 lg:translate-x-0 duration-300 flex flex-col p-6 w-80 bg-white flex-shrink-0 h-[calc(100vh-100px)] rounded-md lg:rounded-none overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
                 <div class="flex items-center bg-indigo-100 border border-gray-200 w-full py-6 px-4 rounded-lg">
                     <img src="{{ auth()->user()->user_avatar }}" alt="Avatar"
                         class="h-16 w-16 rounded-full border overflow-hidden object-cover" />
@@ -73,17 +82,8 @@
                 </div>
             </aside>
 
-            <div class="flex-1 p-6 justify-between flex flex-col h-[calc(100vh-100px)] bg-gray-50">
-                <button @click="isMenuOpen = ! isMenuOpen"
-                    class="lg:hidden inline-flex items-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{ 'hidden': isMenuOpen, 'inline-flex': !isMenuOpen }" class="inline-flex"
-                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{ 'hidden': !isMenuOpen, 'inline-flex': isMenuOpen }" class="hidden"
-                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+            <div
+                class="flex-1 p-6 justify-between flex flex-col h-[calc(100vh-100px)] bg-gray-50 rounded-md lg:rounded-none">
                 @if ($isSelected)
                     <div class="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
                         <div class="relative flex items-center space-x-4">
