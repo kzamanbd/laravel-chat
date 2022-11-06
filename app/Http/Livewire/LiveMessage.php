@@ -10,6 +10,7 @@ use Livewire\Component;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
+use Faker\Core\Number;
 use Illuminate\Support\Facades\Auth;
 
 class LiveMessage extends Component
@@ -20,6 +21,7 @@ class LiveMessage extends Component
     protected $listeners = [
         'refreshMessage' => 'getMessage',
         'refreshConversation' => 'getConversationsProperty',
+        'updateMessageSeenAt' => 'updateMessageSeenAt'
     ];
 
     /**
@@ -60,9 +62,9 @@ class LiveMessage extends Component
     {
         $this->isSelected = true;
         $this->newMessage = null;
-        $this->conversation = Conversation::with(["from", "to", "messages"])->find($id);
+        $this->conversation = Conversation::with(['from', 'to', 'messages'])->find($id);
         $this->dispatchBrowserEvent('scroll-bottom');
-        $this->emit('connected-to-message', $this->conversation);
+        $this->emit('connect', $this->conversation);
         $this->updateMessageStatus($id);
     }
 
@@ -72,10 +74,10 @@ class LiveMessage extends Component
     public function getConversationsProperty(): Collection
     {
         return Conversation::query()
-            ->where("from_user_id", Auth::id())
-            ->orWhere("to_user_id", Auth::id())
-            ->with(["from", "to"])
-            ->withCount(["unreadMessage"])
+            ->where('from_user_id', Auth::id())
+            ->orWhere('to_user_id', Auth::id())
+            ->with(['from', 'to'])
+            ->withCount(['unreadMessage'])
             ->get();
     }
 
@@ -86,9 +88,24 @@ class LiveMessage extends Component
     public function updateMessageStatus($id): void
     {
         Message::query()
-            ->where("conversation_id", $id)
-            ->where("user_id", "!=", Auth::id())
-            ->update(["is_seen" => 1]);
+            ->where('conversation_id', $id)
+            ->where('user_id', '!=', Auth::id())
+            ->where('is_seen', false)
+            ->update(['is_seen' => true]);
+
+        Message::query()
+            ->where('conversation_id', $id)
+            ->where('user_id', '!=', Auth::id())
+            ->whereNull('seen_at')
+            ->update(['seen_at' => now()]);
+    }
+
+    public function updateMessageSeenAt($id)
+    {
+        Message::query()
+            ->where('id', $id)
+            ->whereNull('seen_at')
+            ->update(['seen_at' => now()]);
     }
 
     /**
@@ -108,7 +125,7 @@ class LiveMessage extends Component
     public function hasNewMessage(): bool
     {
         $message = Conversation::query()->whereHas('messages', function ($query) {
-            return $query->where("is_seen", 0);
+            return $query->where('is_seen', 0);
         })->count();
 
         return (bool)$message;
@@ -124,7 +141,7 @@ class LiveMessage extends Component
             $this->conversations->pluck('from_user_id')->toArray(),
             $this->conversations->pluck('to_user_id')->toArray()
         );
-        return User::query()->whereNotIn("id", $ids)->get();
+        return User::query()->whereNotIn('id', $ids)->get();
     }
 
     /**

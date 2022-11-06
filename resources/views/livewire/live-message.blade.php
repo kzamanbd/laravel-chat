@@ -206,39 +206,30 @@
                             @scroll-bottom.window="scroll()"
                             class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
                             @forelse ($conversation->messages as $message)
-                                @if (auth()->user()->id != $message->user_id)
+                                <div
+                                    class="flex items-end {{ auth()->id() == $message->user_id ? 'justify-end' : '' }}">
                                     <div class="chat-message">
                                         <div class="flex items-end">
                                             <div
-                                                class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
-                                                <div>
-                                                    <span
-                                                        class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
-                                                        {{ $message->message }}
-                                                    </span>
-                                                </div>
+                                                class="flex flex-col space-y-2 text-xs max-w-xs mx-2 {{ auth()->id() == $message->user_id ? 'order-1 items-end' : 'order-2 items-start' }}">
+                                                <span
+                                                    class="px-4 py-2 rounded-lg inline-block {{ auth()->id() == $message->user_id ? 'rounded-br-none bg-blue-600 text-white' : 'rounded-bl-none bg-gray-300 text-gray-600' }}">
+                                                    {{ $message->message }}
+                                                </span>
                                             </div>
-                                            <img src="https://ui-avatars.com/api/?background=random&name={{ $conversation->to->name }}"
-                                                alt="My profile" class="w-6 h-6 rounded-full order-1" />
+                                            @if (auth()->id() == $message->user_id)
+                                                <img src="https://ui-avatars.com/api/?background=random&name={{ auth()->user()->name }}"
+                                                    alt="Profile" class="w-6 h-6 rounded-full order-2" />
+                                            @else
+                                                <img src="https://ui-avatars.com/api/?background=random&name={{ $conversation->to->name }}"
+                                                    alt="Profile" class="w-6 h-6 rounded-full order-1" />
+                                            @endif
                                         </div>
+                                        @if (auth()->id() == $message->user_id && $loop->last)
+                                            <small>{{ $message->last_seen_time }}</small>
+                                        @endif
                                     </div>
-                                @else
-                                    <div class="chat-message">
-                                        <div class="flex items-end justify-end">
-                                            <div
-                                                class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-                                                <div>
-                                                    <span
-                                                        class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white">
-                                                        {{ $message->message }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <img src="https://ui-avatars.com/api/?background=random&name={{ auth()->user()->name }}"
-                                                alt="My profile" class="w-6 h-6 rounded-full order-2" />
-                                        </div>
-                                    </div>
-                                @endif
+                                </div>
                             @empty
                                 <div class="w-full px-5 flex flex-col justify-center h-full">
                                     <div class="flex justify-center">
@@ -345,7 +336,7 @@
 
     <x-slot name="footer">
         <script>
-            window.livewire.on('connected-to-message', (message) => {
+            window.livewire.on('connect', (message) => {
                 window.Echo.channel(`message.${message.id}`).on('message.created', (response) => {
                     console.log('connected-message', response);
                     window.livewire.emit('refreshMessage', message.id);

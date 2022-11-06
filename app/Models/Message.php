@@ -11,9 +11,24 @@ class Message extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $appends = ['last_seen_time'];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'seen_at' => 'datetime',
+    ];
 
     public function conversation(): BelongsTo
     {
         return $this->belongsTo(Conversation::class, 'conversation_id', 'id');
+    }
+
+    public function getLastSeenTimeAttribute()
+    {
+        return $this->seen_at ? $this->seen_at->diffForHumans() : null;
     }
 }
