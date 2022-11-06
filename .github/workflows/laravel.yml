@@ -18,4 +18,4 @@ jobs:
         server: 207.180.201.234
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /app.kzaman.me
+        server-dir: /app.kzaman.me/
