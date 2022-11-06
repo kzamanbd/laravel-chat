@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('conversation_id')
                 ->constrained()
                 ->onDelete('cascade');
-            $table->text('message_text');
+            $table->text('message')->nullable();
             $table->boolean('is_seen')
                 ->default(false)
                 ->comment('false = unread, true = read');

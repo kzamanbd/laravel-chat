@@ -45,7 +45,7 @@ class LiveMessage extends Component
         $message = Message::create([
             'conversation_id' => $conversation_id,
             'user_id' => Auth::id(),
-            'message_text' => $this->messageText
+            'message' => $this->messageText
         ]);
         broadcast(new MessageCreated($message))->toOthers();
         $this->messageText = null;

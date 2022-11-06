@@ -30,11 +30,18 @@ class MessageCreated implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return Channel
+     * @return array
      */
-    public function broadcastOn(): Channel
+    public function broadcastOn(): array
     {
-        return new Channel("message.{$this->message->conversation_id}");
+        $to_user_id = $this->message->conversation->to_user_id;
+        $from_user_id = $this->message->conversation->from_user_id;
+        $targetUserId = $to_user_id == auth()->id() ? $from_user_id : $to_user_id;
+
+        return [
+            new Channel("message.{$this->message->conversation_id}"),
+            new Channel("notify.message.$targetUserId"),
+        ];
     }
 
     public function broadcastAs(): string
