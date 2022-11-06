@@ -16,6 +16,7 @@ class MessageSeenTime implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public Message $message;
+
     /**
      * Create a new event instance.
      *
@@ -35,6 +36,7 @@ class MessageSeenTime implements ShouldBroadcast
     {
         return new Channel("lastSeenTime.{$this->message->conversation_id}");
     }
+
     public function broadcastAs(): string
     {
         return 'message.seen';

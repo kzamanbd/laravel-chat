@@ -221,7 +221,7 @@
                                                 <img src="https://ui-avatars.com/api/?background=random&name={{ auth()->user()->name }}"
                                                     alt="Profile" class="w-6 h-6 rounded-full order-2" />
                                             @else
-                                                <img src="https://ui-avatars.com/api/?background=random&name={{ $conversation->to->name }}"
+                                                <img src="https://ui-avatars.com/api/?background=random&name={{ $conversation->from->name }}"
                                                     alt="Profile" class="w-6 h-6 rounded-full order-1" />
                                             @endif
                                         </div>

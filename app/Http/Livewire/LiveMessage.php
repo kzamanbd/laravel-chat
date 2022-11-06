@@ -2,16 +2,15 @@
 
 namespace App\Http\Livewire;
 
-use App\Events\ConversationCreated;
+use App\Models\User;
+use App\Models\Message;
+use App\Models\Conversation;
 use App\Events\MessageCreated;
 use App\Events\MessageSeenTime;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\View\View;
+use App\Events\ConversationCreated;
 use Livewire\Component;
-use App\Models\Conversation;
-use App\Models\Message;
-use App\Models\User;
-use Faker\Core\Number;
+use Illuminate\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class LiveMessage extends Component
@@ -34,10 +33,18 @@ class LiveMessage extends Component
         ]);
 
         if (!isset($this->conversation->id)) {
-            $conversation = Conversation::create([
-                'from_user_id' => Auth::id(),
-                'to_user_id' => $this->newMessage->id
-            ]);
+            // check if conversation exists
+            $conversation = Conversation::query()
+                ->where('from_user_id', Auth::id())
+                ->where('to_user_id', $this->newMessage->id)
+                ->first();
+
+            if (!$conversation) {
+                $conversation = Conversation::create([
+                    'from_user_id' => Auth::id(),
+                    'to_user_id' => $this->newMessage->id
+                ]);
+            }
             $conversationId = $conversation->id;
             broadcast(new ConversationCreated($conversation))->toOthers();
         } else {
@@ -55,7 +62,7 @@ class LiveMessage extends Component
     }
 
     /**
-     * @param $id
+     * @param $conversationId
      * @return void
      */
     public function getMessage($conversationId): void
@@ -82,7 +89,7 @@ class LiveMessage extends Component
     }
 
     /**
-     * @param $id
+     * @param $conversationId
      * @return void
      */
     public function updateMessageStatus($conversationId): void
@@ -96,7 +103,7 @@ class LiveMessage extends Component
     }
 
     /**
-     * @param $id
+     * @param $conversationId
      * @return void
      */
     public function updateMessageSeenTime($conversationId): void
@@ -115,7 +122,11 @@ class LiveMessage extends Component
         }
     }
 
-    public function updateMessageSeenAt($id)
+    /**
+     * @param $id
+     * @return void
+     */
+    public function updateMessageSeenAt($id): void
     {
         Message::query()
             ->where('id', $id)
