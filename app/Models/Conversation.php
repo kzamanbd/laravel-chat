@@ -39,7 +39,10 @@ class Conversation extends Model
 
     public function getUserAvatarAttribute(): string
     {
-        $name = $this->to_user_id == auth()->id() ? urlencode($this->from->name) : urlencode($this->to->name);
+        $name = $this->to_user_id == auth()->id()
+            ? urlencode($this->from->name)
+            : urlencode($this->to->name);
+
         return "https://ui-avatars.com/api/?background=random&name=$name";
     }
 
@@ -48,7 +51,10 @@ class Conversation extends Model
      */
     public function getIsOnlineAttribute(): bool
     {
-        $key = $this->to_user_id == auth()->id() ? $this->from_user_id : $this->to_user_id;
+        $key = $this->to_user_id == auth()->id()
+            ? $this->from_user_id
+            : $this->to_user_id;
+
         return cache()->has("is-online-$key");
     }
 }
