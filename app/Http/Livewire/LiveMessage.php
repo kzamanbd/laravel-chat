@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Events\ConversationCreated;
 use App\Events\MessageCreated;
+use App\Events\MessageSeenTime;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -20,8 +21,7 @@ class LiveMessage extends Component
 
     protected $listeners = [
         'refreshMessage' => 'getMessage',
-        'refreshConversation' => 'getConversationsProperty',
-        'updateMessageSeenAt' => 'updateMessageSeenAt'
+        'refreshConversation' => 'getConversationsProperty'
     ];
 
     /**
@@ -38,34 +38,34 @@ class LiveMessage extends Component
                 'from_user_id' => Auth::id(),
                 'to_user_id' => $this->newMessage->id
             ]);
-            $conversation_id = $conversation->id;
+            $conversationId = $conversation->id;
             broadcast(new ConversationCreated($conversation))->toOthers();
         } else {
-            $conversation_id = $this->conversation->id;
+            $conversationId = $this->conversation->id;
         }
 
         $message = Message::create([
-            'conversation_id' => $conversation_id,
+            'conversation_id' => $conversationId,
             'user_id' => Auth::id(),
             'message' => $this->messageText
         ]);
         broadcast(new MessageCreated($message))->toOthers();
         $this->messageText = null;
-        $this->getMessage($conversation_id);
+        $this->getMessage($conversationId);
     }
 
     /**
      * @param $id
      * @return void
      */
-    public function getMessage($id): void
+    public function getMessage($conversationId): void
     {
         $this->isSelected = true;
         $this->newMessage = null;
-        $this->conversation = Conversation::with(['from', 'to', 'messages'])->find($id);
+        $this->conversation = Conversation::with(['from', 'to', 'messages'])->find($conversationId);
         $this->dispatchBrowserEvent('scroll-bottom');
         $this->emit('connect', $this->conversation);
-        $this->updateMessageStatus($id);
+        $this->updateMessageStatus($conversationId);
     }
 
     /**
@@ -85,19 +85,34 @@ class LiveMessage extends Component
      * @param $id
      * @return void
      */
-    public function updateMessageStatus($id): void
+    public function updateMessageStatus($conversationId): void
     {
         Message::query()
-            ->where('conversation_id', $id)
+            ->where('conversation_id', $conversationId)
             ->where('user_id', '!=', Auth::id())
             ->where('is_seen', false)
             ->update(['is_seen' => true]);
+        $this->updateMessageSeenTime($conversationId);
+    }
 
-        Message::query()
-            ->where('conversation_id', $id)
+    /**
+     * @param $id
+     * @return void
+     */
+    public function updateMessageSeenTime($conversationId): void
+    {
+        $messages = Message::query()
+            ->where('conversation_id', $conversationId)
             ->where('user_id', '!=', Auth::id())
-            ->whereNull('seen_at')
-            ->update(['seen_at' => now()]);
+            ->whereNull('seen_at')->get();
+
+        if ($messages->count() > 0) {
+            $messages->each(function ($message) {
+                $message->update(['seen_at' => now()]);
+            });
+            $message = $messages->last();
+            broadcast(new MessageSeenTime($message))->toOthers();
+        }
     }
 
     public function updateMessageSeenAt($id)

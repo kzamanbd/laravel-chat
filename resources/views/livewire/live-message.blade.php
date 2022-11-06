@@ -247,7 +247,7 @@
                     @endif
 
                     <div class="border-t-2 border-gray-200 pt-4 mb-2 sm:mb-0">
-                        <div class="relative flex">
+                        <form wire:submit.prevent="sendMessage" class="relative flex">
                             <span class="absolute inset-y-0 flex items-center">
                                 <button type="button"
                                     class="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
@@ -260,7 +260,6 @@
                                 </button>
                             </span>
                             <input type="text" placeholder="Write your message!" wire:model.lazy="messageText"
-                                wire:keydown.enter="sendMessage()"
                                 class="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3" />
 
                             <div class="absolute right-0 items-center inset-y-0 hidden sm:flex">
@@ -284,7 +283,7 @@
                                         </path>
                                     </svg>
                                 </button>
-                                <button type="button" wire:click="sendMessage()"
+                                <button type="submit"
                                     class="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none">
                                     <span class="font-bold">Send</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -295,7 +294,7 @@
                                     </svg>
                                 </button>
                             </div>
-                        </div>
+                        </form>
                         <x-input-error :messages="$errors->get('messageText')" class="mt-2" />
                     </div>
                 @else
@@ -339,6 +338,10 @@
             window.livewire.on('connect', (message) => {
                 window.Echo.channel(`message.${message.id}`).on('message.created', (response) => {
                     console.log('connected-message', response);
+                    window.livewire.emit('refreshMessage', message.id);
+                });
+                window.Echo.channel(`lastSeenTime.${message.id}`).on('message.seen', (response) => {
+                    console.log('lastSeenTime', response);
                     window.livewire.emit('refreshMessage', message.id);
                 });
             });
