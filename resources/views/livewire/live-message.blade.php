@@ -217,13 +217,8 @@
                                                     {{ $message->message }}
                                                 </span>
                                             </div>
-                                            @if (auth()->id() == $message->user_id)
-                                                <img src="https://ui-avatars.com/api/?background=random&name={{ auth()->user()->name }}"
-                                                    alt="Profile" class="w-6 h-6 rounded-full order-2" />
-                                            @else
-                                                <img src="https://ui-avatars.com/api/?background=random&name={{ $conversation->from->name }}"
-                                                    alt="Profile" class="w-6 h-6 rounded-full order-1" />
-                                            @endif
+                                            <img src="https://ui-avatars.com/api/?background=random&name={{ $message->user_avatar }}"
+                                                alt="Profile" class="w-6 h-6 rounded-full order-1" />
                                         </div>
                                         @if (auth()->id() == $message->user_id && $loop->last)
                                             <small>{{ $message->last_seen_time }}</small>

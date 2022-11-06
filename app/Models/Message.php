@@ -29,15 +29,18 @@ class Message extends Model
 
     public function getLastSeenTimeAttribute()
     {
-        return $this->seen_at ? $this->seen_at->diffForHumans() : null;
+        return $this->seen_at
+            ? $this->seen_at->diffForHumans()
+            : null;
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function getUserAvatarAttribute(): string
     {
-        return $name = $this->conversation->to_user_id == auth()->id()
-            ? urlencode($this->conversation->from->name)
-            : urlencode($this->conversation->to->name);
-
-        return "https://ui-avatars.com/api/?background=random&name=$name";;
+        return $this->user->user_avatar;
     }
 }

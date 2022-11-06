@@ -69,7 +69,7 @@ class LiveMessage extends Component
     {
         $this->isSelected = true;
         $this->newMessage = null;
-        $this->conversation = Conversation::with(['from', 'to', 'messages'])->find($conversationId);
+        $this->conversation = Conversation::with(['from', 'to', 'messages.user'])->find($conversationId);
         $this->dispatchBrowserEvent('scroll-bottom');
         $this->emit('connect', $this->conversation);
         $this->updateMessageStatus($conversationId);
