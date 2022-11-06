@@ -11,7 +11,7 @@ class Message extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $appends = ['last_seen_time'];
+    protected $appends = ['user_avatar', 'last_seen_time'];
 
     /**
      * The attributes that should be cast.
@@ -30,5 +30,14 @@ class Message extends Model
     public function getLastSeenTimeAttribute()
     {
         return $this->seen_at ? $this->seen_at->diffForHumans() : null;
+    }
+
+    public function getUserAvatarAttribute(): string
+    {
+        return $name = $this->conversation->to_user_id == auth()->id()
+            ? urlencode($this->conversation->from->name)
+            : urlencode($this->conversation->to->name);
+
+        return "https://ui-avatars.com/api/?background=random&name=$name";;
     }
 }
