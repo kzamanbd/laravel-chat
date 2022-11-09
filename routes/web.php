@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return redirect(route('dashboard'));
-});
+Route::get('/', fn () => redirect('/dashboard'));
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', LiveMessage::class)->name('dashboard');
