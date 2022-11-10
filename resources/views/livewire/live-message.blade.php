@@ -200,46 +200,71 @@
                             </button>
                         </div>
                     </div>
-
-                    @if ($conversation)
-                        <div id="messages" x-data="{ scroll: () => { $el.scrollTo(0, $el.scrollHeight); } }" x-init="scroll()"
-                            @scroll-bottom.window="scroll()"
-                            class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
-                            @forelse ($conversation->messages as $message)
-                                <div
-                                    class="flex items-end {{ auth()->id() == $message->user_id ? 'justify-end' : '' }}">
-                                    <div class="chat-message">
-                                        <div class="flex items-end">
-                                            <div
-                                                class="flex flex-col space-y-2 text-xs max-w-xs mx-2 {{ auth()->id() == $message->user_id ? 'order-1 items-end' : 'order-2 items-start' }}">
-                                                <span
-                                                    class="px-4 py-2 rounded-lg inline-block {{ auth()->id() == $message->user_id ? 'rounded-br-none bg-blue-600 text-white' : 'rounded-bl-none bg-gray-300 text-gray-600' }}">
-                                                    {{ $message->message }}
-                                                </span>
+                    <div x-data="scrollData" x-ref="message" @scroll-bottom.window="scrollToBottom()"
+                        class="overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
+                        @if ($conversation)
+                            <div id="messages" class="flex flex-col space-y-4 p-3">
+                                @forelse ($conversation->messages as $message)
+                                    <div
+                                        class="flex items-end {{ auth()->id() == $message->user_id ? 'justify-end' : '' }}">
+                                        <div class="chat-message">
+                                            <div class="flex items-end">
+                                                <div
+                                                    class="flex flex-col space-y-2 text-xs max-w-xs mx-2 {{ auth()->id() == $message->user_id ? 'order-1 items-end' : 'order-2 items-start' }}">
+                                                    <span
+                                                        class="px-4 py-2 rounded-lg inline-block {{ auth()->id() == $message->user_id ? 'rounded-br-none bg-blue-600 text-white' : 'rounded-bl-none bg-gray-300 text-gray-600' }}">
+                                                        {{ $message->message }}
+                                                    </span>
+                                                </div>
+                                                <img src="https://ui-avatars.com/api/?background=random&name={{ $message->user_avatar }}"
+                                                    alt="Profile" class="w-6 h-6 rounded-full order-1" />
                                             </div>
-                                            <img src="https://ui-avatars.com/api/?background=random&name={{ $message->user_avatar }}"
-                                                alt="Profile" class="w-6 h-6 rounded-full order-1" />
+                                            @if (auth()->id() == $message->user_id && $loop->last)
+                                                <small>{{ $message->last_seen_time }}</small>
+                                            @endif
                                         </div>
-                                        @if (auth()->id() == $message->user_id && $loop->last)
-                                            <small>{{ $message->last_seen_time }}</small>
+                                    </div>
+                                @empty
+                                    <div class="w-full px-5 flex flex-col justify-center h-full">
+                                        <div class="flex justify-center">
+                                            No Previous message, You can start new conversation
+                                        </div>
+                                    </div>
+                                @endforelse
+                            </div>
+                        @elseif($newMessage)
+                            <div class="w-full px-5 flex flex-col justify-center h-full">
+                                <div class="flex justify-center">
+                                    No Previous message, You can start new conversation
+                                </div>
+                            </div>
+                        @endif
+                        <div class="flex items-end justify-end">
+                            <div class="flex flex-col space-y-2 max-w-xs mx-2 order-1 items-end">
+                                <div
+                                    class="grid gap-1 {{ count($mediaUpload) > 1 ? 'grid-cols-2' : 'grid-cols-1' }} relative">
+                                    @foreach ($mediaUpload as $media)
+                                        @if (in_array($media->getClientOriginalExtension(), ['jpg', 'jpeg', 'png', 'gif', 'svg']))
+                                            <img src="{{ $media->temporaryUrl() }}"
+                                                class="h-32 w-32 object-cover bg-gray-300 rounded p-2">
+                                        @else
+                                            <a href="#"
+                                                class="flex items-center justify-center h-32 w-32 border bg-gray-300 rounded p-2">
+                                                {{ $media->getClientOriginalName() }}
+                                            </a>
                                         @endif
-                                    </div>
+                                        @if ($loop->iteration == 4 && count($mediaUpload) > 4)
+                                            <div
+                                                class="text-white h-32 w-32 border p-2 bg-gray-800 opacity-70 absolute bottom-0 right-0 flex justify-center items-center">
+                                                {{ count($mediaUpload) - 4 }} +
+                                            </div>
+                                        @endif
+                                        @break($loop->iteration == 4)
+                                    @endforeach
                                 </div>
-                            @empty
-                                <div class="w-full px-5 flex flex-col justify-center h-full">
-                                    <div class="flex justify-center">
-                                        No Previous message, You can start new conversation
-                                    </div>
-                                </div>
-                            @endforelse
-                        </div>
-                    @elseif($newMessage)
-                        <div class="w-full px-5 flex flex-col justify-center h-full">
-                            <div class="flex justify-center">
-                                No Previous message, You can start new conversation
                             </div>
                         </div>
-                    @endif
+                    </div>
 
                     <div class="border-t-2 border-gray-200 pt-4 mb-2 sm:mb-0">
                         <form wire:submit.prevent="sendMessage" class="relative flex">
@@ -266,7 +291,8 @@
                                             d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
                                         </path>
                                     </svg>
-                                    <input id="dropzone-file" type="file" class="hidden" />
+                                    <input id="dropzone-file" type="file" class="hidden" wire:model="mediaUpload"
+                                        multiple />
                                 </label>
 
                                 <button type="button"
@@ -350,6 +376,19 @@
                     window.livewire.emit('refreshConversation');
                 });
             }
+            // alpine init
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('scrollData', () => ({
+                    init() {
+                        this.$nextTick(() => {
+                            this.scrollToBottom();
+                        })
+                    },
+                    scrollToBottom() {
+                        this.$refs.message.scrollTo(0, this.$refs.message.scrollHeight);
+                    }
+                }))
+            })
         </script>
     </x-slot>
 </div>

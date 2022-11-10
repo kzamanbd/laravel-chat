@@ -12,16 +12,24 @@ use Livewire\Component;
 use Illuminate\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithFileUploads;
 
 class LiveMessage extends Component
 {
+    use WithFileUploads;
 
     public $conversation, $newMessage, $messageText, $isSelected = false;
+    public $mediaUpload = [];
 
     protected $listeners = [
         'refreshMessage' => 'getMessage',
         'refreshConversation' => 'getConversationsProperty'
     ];
+
+    public function updatedMediaUpload()
+    {
+        $this->dispatchBrowserEvent('scroll-bottom');
+    }
 
     /**
      * @return void
@@ -140,6 +148,7 @@ class LiveMessage extends Component
      */
     public function startNewMessage($id): void
     {
+        $this->reset();
         $this->conversation = null;
         $this->isSelected = true;
         $this->newMessage = User::find($id);
