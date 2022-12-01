@@ -6,25 +6,14 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
+                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        <div class="flex flex-row items-center justify-center h-12 w-full">
-                            <div
-                                class="flex items-center justify-center rounded-2xl text-indigo-700 bg-indigo-100 h-10 w-10">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <div class="ml-2 font-bold text-2xl">QuickChat</div>
-                        </div>
+                        {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -34,7 +23,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button
-                            class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
 
                             <div class="ml-1">
@@ -49,6 +38,10 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <x-dropdown-link :href="route('profile.edit')">
+                            {{ __('Profile') }}
+                        </x-dropdown-link>
+
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -95,6 +88,10 @@
             </div>
 
             <div class="mt-3 space-y-1">
+                <x-responsive-nav-link :href="route('profile.edit')">
+                    {{ __('Profile') }}
+                </x-responsive-nav-link>
+
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
