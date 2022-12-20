@@ -43,7 +43,7 @@ class Conversation extends Model
             ? urlencode($this->from->name)
             : urlencode($this->to->name);
 
-        return "https://ui-avatars.com/api/?background=random&name=$name";
+        return "https://ui-avatars.com/api/?background=d5d3f8&color=7269ef&name=$name";
     }
 
     /**

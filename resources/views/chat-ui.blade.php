@@ -1,28 +1,4 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Laravel') }}</title>
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('chat-ui/images/favicon.ico') }}" />
-    <!-- magnific-popup css -->
-    <link href="{{ asset('chat-ui/libs/magnific-popup/magnific-popup.css') }}" rel="stylesheet" />
-    <!-- owl.carousel css -->
-    <link rel="stylesheet" href="{{ asset('chat-ui/libs/owl.carousel/assets/owl.carousel.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('chat-ui/libs/owl.carousel/assets/owl.theme.default.min.css') }}" />
-    <!-- Bootstrap Css -->
-    <link href="{{ asset('chat-ui/css/bootstrap.min.css') }}" rel="stylesheet" />
-    <!-- Icons Css -->
-    <link href="{{ asset('chat-ui/css/icons.min.css') }}" rel="stylesheet" />
-    <!-- App Css-->
-    <link href="{{ asset('chat-ui/css/app.css') }}" rel="stylesheet" />
-    <link href="{{ asset('chat-ui/css/waves.css') }}" rel="stylesheet" />
-</head>
-
-<body>
+<x-b-layout>
     <div class="layout-wrapper d-lg-flex">
         <!-- Start left sidebar-menu -->
         <div class="side-menu flex-lg-column me-lg-1 ms-lg-0">
@@ -451,8 +427,8 @@
                                 <div class="item">
                                     <a href="#" class="user-status-box">
                                         <div class="avatar-xs mx-auto d-block chat-user-img online">
-                                            <img src="{{ asset('chat-ui/images/users/avatar-2.jpg') }}"
-                                                alt="user-img" class="img-fluid rounded-circle" />
+                                            <img src="{{ asset('chat-ui/images/users/avatar-2.jpg') }}" alt="user-img"
+                                                class="img-fluid rounded-circle" />
                                             <span class="user-status"></span>
                                         </div>
 
@@ -462,8 +438,8 @@
                                 <div class="item">
                                     <a href="#" class="user-status-box">
                                         <div class="avatar-xs mx-auto d-block chat-user-img online">
-                                            <img src="{{ asset('chat-ui/images/users/avatar-4.jpg') }}"
-                                                alt="user-img" class="img-fluid rounded-circle" />
+                                            <img src="{{ asset('chat-ui/images/users/avatar-4.jpg') }}" alt="user-img"
+                                                class="img-fluid rounded-circle" />
                                             <span class="user-status"></span>
                                         </div>
 
@@ -474,8 +450,8 @@
                                 <div class="item">
                                     <a href="#" class="user-status-box">
                                         <div class="avatar-xs mx-auto d-block chat-user-img online">
-                                            <img src="{{ asset('chat-ui/images/users/avatar-5.jpg') }}"
-                                                alt="user-img" class="img-fluid rounded-circle" />
+                                            <img src="{{ asset('chat-ui/images/users/avatar-5.jpg') }}" alt="user-img"
+                                                class="img-fluid rounded-circle" />
                                             <span class="user-status"></span>
                                         </div>
 
@@ -486,8 +462,8 @@
                                 <div class="item">
                                     <a href="#" class="user-status-box">
                                         <div class="avatar-xs mx-auto d-block chat-user-img online">
-                                            <img src="{{ asset('chat-ui/images/users/avatar-6.jpg') }}"
-                                                alt="user-img" class="img-fluid rounded-circle" />
+                                            <img src="{{ asset('chat-ui/images/users/avatar-6.jpg') }}" alt="user-img"
+                                                class="img-fluid rounded-circle" />
                                             <span class="user-status"></span>
                                         </div>
 
@@ -515,33 +491,34 @@
                         <!-- Start chat-message-list -->
                         <div>
                             <h5 class="mb-3 px-3 font-size-16">Recent</h5>
-
                             <div class="chat-message-list px-2" data-simplebar>
                                 <ul class="list-unstyled chat-list chat-user-list">
-                                    <li>
-                                        <a href="#">
-                                            <div class="d-flex">
-                                                <div class="chat-user-img online align-self-center me-3 ms-0">
-                                                    <img src="{{ asset('chat-ui/images/users/avatar-2.jpg') }}"
-                                                        class="rounded-circle avatar-xs" />
-                                                    <span class="user-status"></span>
-                                                </div>
+                                    @foreach ($this->conversations as $item)
+                                        <li>
+                                            <a href="#" class="user">
+                                                <div class="d-flex">
+                                                    <div class="chat-user-img online align-self-center me-3 ms-0">
+                                                        <img src="{{ $item->user_avatar }}"
+                                                            class="rounded-circle avatar-xs" />
+                                                        <span class="user-status"></span>
+                                                    </div>
 
-                                                <div class="flex-grow-1 overflow-hidden">
-                                                    <h5 class="text-truncate font-size-15 mb-1">
-                                                        Patrick Hendricks
-                                                    </h5>
-                                                    <p class="chat-user-message text-truncate mb-0">
-                                                        Hey! there I'm available
-                                                    </p>
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <h5 class="text-truncate font-size-15 mb-1">
+                                                            Patrick Hendricks
+                                                        </h5>
+                                                        <p class="chat-user-message text-truncate mb-0">
+                                                            Hey! there I'm available
+                                                        </p>
+                                                    </div>
+                                                    <div class="font-size-11">05 min</div>
                                                 </div>
-                                                <div class="font-size-11">05 min</div>
-                                            </div>
-                                        </a>
-                                    </li>
+                                            </a>
+                                        </li>
+                                    @endforeach
 
                                     <li class="unread">
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img away align-self-center me-3 ms-0">
                                                     <img src="{{ asset('chat-ui/images/users/avatar-3.jpg') }}"
@@ -563,7 +540,7 @@
                                     </li>
 
                                     <li>
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img align-self-center me-3 ms-0">
                                                     <div class="avatar-xs">
@@ -585,7 +562,7 @@
                                     </li>
 
                                     <li class="active">
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img online align-self-center me-3 ms-0">
                                                     <img src="{{ asset('chat-ui/images/users/avatar-4.jpg') }}"
@@ -603,7 +580,7 @@
                                         </a>
                                     </li>
                                     <li class="unread">
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img align-self-center me-3 ms-0">
                                                     <div class="avatar-xs">
@@ -627,7 +604,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img away align-self-center me-3 ms-0">
                                                     <img src="{{ asset('chat-ui/images/users/avatar-6.jpg') }}"
@@ -646,7 +623,7 @@
                                         </a>
                                     </li>
                                     <li class="typing">
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img align-self-center online me-3 ms-0">
                                                     <div class="avatar-xs">
@@ -673,7 +650,7 @@
                                     </li>
 
                                     <li>
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img align-self-center online me-3 ms-0">
                                                     <div class="avatar-xs">
@@ -695,7 +672,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img away align-self-center me-3 ms-0">
                                                     <img src="{{ asset('chat-ui/images/users/avatar-7.jpg') }}"
@@ -711,7 +688,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img align-self-center online me-3 ms-0">
                                                     <div class="avatar-xs">
@@ -733,7 +710,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img away align-self-center me-3 ms-0">
                                                     <img src="{{ asset('chat-ui/images/users/avatar-8.jpg') }}"
@@ -751,7 +728,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="#" class="user">
                                             <div class="d-flex">
                                                 <div class="chat-user-img align-self-center online me-3 ms-0">
                                                     <div class="avatar-xs">
@@ -3012,18 +2989,4 @@
         </div>
         <!-- end modal -->
     </div>
-    <!-- JAVASCRIPT -->
-    <script src="{{ asset('chat-ui/libs/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('chat-ui/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('chat-ui/libs/simplebar/simplebar.min.js') }}"></script>
-    <script src="{{ asset('chat-ui/libs/node-waves/waves.min.js') }}"></script>
-    <!-- Magnific Popup-->
-    <script src="{{ asset('chat-ui/libs/magnific-popup/jquery.magnific-popup.min.js') }}"></script>
-    <!-- owl.carousel js -->
-    <script src="{{ asset('chat-ui/libs/owl.carousel/owl.carousel.min.js') }}"></script>
-    <!-- page init -->
-    <script src="{{ asset('chat-ui/js/pages/index.init.js') }}"></script>
-    <script src="{{ asset('chat-ui/js/app.js') }}"></script>
-</body>
-
-</html>
+</x-b-layout>

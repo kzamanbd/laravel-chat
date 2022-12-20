@@ -47,7 +47,7 @@ class User extends Authenticatable
     public function getUserAvatarAttribute(): string
     {
         $name = urlencode($this->name);
-        return "https://ui-avatars.com/api/?background=random&name=$name";
+        return "https://ui-avatars.com/api/?background=d5d3f8&color=7269ef&name=$name";
     }
 
     /**
