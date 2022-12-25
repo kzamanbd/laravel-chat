@@ -13,7 +13,13 @@ class Conversation extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $appends = ['user_avatar', 'is_online'];
+    protected $appends = [
+        'username',
+        'user_avatar',
+        'is_online',
+        'latest_message',
+        'latest_message_time'
+    ];
 
     public function from(): HasOne
     {
@@ -37,12 +43,21 @@ class Conversation extends Model
             ->where('is_seen', 0);
     }
 
+    public function getUserName()
+    {
+        return $this->to_user_id == auth()->id()
+            ? $this->from->name
+            : $this->to->name;
+    }
+
+    public function getUsernameAttribute(): string
+    {
+        return $this->getUserName();
+    }
+
     public function getUserAvatarAttribute(): string
     {
-        $name = $this->to_user_id == auth()->id()
-            ? urlencode($this->from->name)
-            : urlencode($this->to->name);
-
+        $name = urlencode($this->getUserName());
         return "https://ui-avatars.com/api/?background=d5d3f8&color=7269ef&name=$name";
     }
 
@@ -56,5 +71,15 @@ class Conversation extends Model
             : $this->to_user_id;
 
         return cache()->has("is-online-$key");
+    }
+
+    public function getLatestMessageAttribute(): string
+    {
+        return $this->messages->last()->message ?? '';
+    }
+
+    public function getLatestMessageTimeAttribute(): string
+    {
+        return $this->messages->last()->created_at->diffForHumans() ?? '';
     }
 }

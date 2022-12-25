@@ -493,22 +493,20 @@
                                                 <div class="chat-user-img online align-self-center me-3 ms-0">
                                                     <img src="{{ $item->user_avatar }}"
                                                         class="rounded-circle avatar-xs" />
-                                                    <span class="user-status"></span>
+                                                    @if ($item->is_online)
+                                                        <span class="user-status"></span>
+                                                    @endif
                                                 </div>
 
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <h5 class="text-truncate font-size-15 mb-1">
-                                                        @if ($item->to->id == auth()->user()->id)
-                                                            {{ $item->from->name }}
-                                                        @else
-                                                            {{ $item->to->name }}
-                                                        @endif
+                                                        {{ $item->username }}
                                                     </h5>
                                                     <p class="chat-user-message text-truncate mb-0">
-                                                        Hey! there I'm available
+                                                        {{ $item->latest_message }}
                                                     </p>
                                                 </div>
-                                                <div class="font-size-11">05 min</div>
+                                                <div class="font-size-11">{{ $item->latest_message_time }}</div>
                                             </div>
                                         </div>
                                     </li>
