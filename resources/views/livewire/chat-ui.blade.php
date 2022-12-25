@@ -2016,7 +2016,7 @@
     <!-- end chat-left sidebar -->
 
     <!-- Start User chat -->
-    <div class="user-chat w-100 overflow-hidden">
+    <div class="user-chat w-100 overflow-hidden user-chat-show">
         <div class="d-lg-flex">
             <!-- start chat conversation section -->
             <div class="w-100 overflow-hidden position-relative">

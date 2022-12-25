@@ -18,7 +18,8 @@ class Conversation extends Model
         'user_avatar',
         'is_online',
         'latest_message',
-        'latest_message_time'
+        'latest_message_time',
+        'unread_message_count',
     ];
 
     public function from(): HasOne
@@ -81,5 +82,10 @@ class Conversation extends Model
     public function getLatestMessageTimeAttribute(): string
     {
         return $this->messages->last()->created_at->diffForHumans() ?? '';
+    }
+
+    public function getUnreadMessageCountAttribute(): int
+    {
+        return $this->unreadMessage->count();
     }
 }
