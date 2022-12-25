@@ -20,11 +20,19 @@
     <!-- App Css-->
     <link href="{{ asset('chat-ui/css/app.css') }}" rel="stylesheet" />
     <link href="{{ asset('chat-ui/css/waves.css') }}" rel="stylesheet" />
+    @vite(['resources/js/app.js'])
+    @livewireStyles
+    @if (isset($head))
+        {{ $head }}
+    @endif
 </head>
 
 <body>
-    {{ $slot }}
+    <div>
+        {{ $slot }}
+    </div>
     <!-- JAVASCRIPT -->
+    @livewireScripts
     <script src="{{ asset('chat-ui/libs/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('chat-ui/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('chat-ui/libs/simplebar/simplebar.min.js') }}"></script>
@@ -36,6 +44,10 @@
     <!-- page init -->
     <script src="{{ asset('chat-ui/js/pages/index.init.js') }}"></script>
     <script src="{{ asset('chat-ui/js/app.js') }}"></script>
+
+    @if (isset($footer))
+        {{ $footer }}
+    @endif
 </body>
 
 </html>
