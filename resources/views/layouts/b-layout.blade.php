@@ -19,7 +19,6 @@
     <link href="{{ asset('chat-ui/css/icons.min.css') }}" rel="stylesheet" />
     <!-- App Css-->
     <link href="{{ asset('chat-ui/css/app.css') }}" rel="stylesheet" />
-    <link href="{{ asset('chat-ui/css/waves.css') }}" rel="stylesheet" />
     @vite(['resources/js/app.js'])
     @livewireStyles
     @if (isset($head))

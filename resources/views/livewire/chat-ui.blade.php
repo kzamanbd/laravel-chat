@@ -487,7 +487,7 @@
                                     <li @class([
                                         'active' => isset($conversation) && $conversation->id == $item->id,
                                     ])>
-                                        <div class="user" wire:click="getMessage({{ $item->id }})"
+                                        <div class="chat-list-item" wire:click="getMessage({{ $item->id }})"
                                             role="button">
                                             <div class="d-flex">
                                                 <div class="chat-user-img online align-self-center me-3 ms-0">
@@ -513,7 +513,7 @@
                                 @endforeach
 
                                 <li class="unread">
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img away align-self-center me-3 ms-0">
                                                 <img src="{{ asset('chat-ui/images/users/avatar-3.jpg') }}"
@@ -535,7 +535,7 @@
                                 </li>
 
                                 <li>
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img align-self-center me-3 ms-0">
                                                 <div class="avatar-xs">
@@ -557,7 +557,7 @@
                                 </li>
 
                                 <li class="active">
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img online align-self-center me-3 ms-0">
                                                 <img src="{{ asset('chat-ui/images/users/avatar-4.jpg') }}"
@@ -575,7 +575,7 @@
                                     </a>
                                 </li>
                                 <li class="unread">
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img align-self-center me-3 ms-0">
                                                 <div class="avatar-xs">
@@ -599,7 +599,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img away align-self-center me-3 ms-0">
                                                 <img src="{{ asset('chat-ui/images/users/avatar-6.jpg') }}"
@@ -618,7 +618,7 @@
                                     </a>
                                 </li>
                                 <li class="typing">
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img align-self-center online me-3 ms-0">
                                                 <div class="avatar-xs">
@@ -645,7 +645,7 @@
                                 </li>
 
                                 <li>
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img align-self-center online me-3 ms-0">
                                                 <div class="avatar-xs">
@@ -667,7 +667,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img away align-self-center me-3 ms-0">
                                                 <img src="{{ asset('chat-ui/images/users/avatar-7.jpg') }}"
@@ -683,7 +683,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img align-self-center online me-3 ms-0">
                                                 <div class="avatar-xs">
@@ -705,7 +705,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img away align-self-center me-3 ms-0">
                                                 <img src="{{ asset('chat-ui/images/users/avatar-8.jpg') }}"
@@ -723,7 +723,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="user">
+                                    <a href="#" class="chat-list-item">
                                         <div class="d-flex">
                                             <div class="chat-user-img align-self-center online me-3 ms-0">
                                                 <div class="avatar-xs">
@@ -1061,7 +1061,7 @@
                     <div class="p-4 chat-message-list chat-group-list" data-simplebar>
                         <ul class="list-unstyled chat-list">
                             <li>
-                                <a href="#">
+                                <a href="#" class="chat-list-item">
                                     <div class="d-flex align-items-center">
                                         <div class="chat-user-img me-3 ms-0">
                                             <div class="avatar-xs">
@@ -1078,7 +1078,7 @@
                             </li>
 
                             <li>
-                                <a href="#">
+                                <a href="#" class="chat-list-item">
                                     <div class="d-flex align-items-center">
                                         <div class="chat-user-img me-3 ms-0">
                                             <div class="avatar-xs">
@@ -1098,7 +1098,7 @@
                             </li>
 
                             <li>
-                                <a href="#">
+                                <a href="#" class="chat-list-item">
                                     <div class="d-flex align-items-center">
                                         <div class="chat-user-img me-3 ms-0">
                                             <div class="avatar-xs">
@@ -1115,7 +1115,7 @@
                             </li>
 
                             <li>
-                                <a href="#">
+                                <a href="#" class="chat-list-item">
                                     <div class="d-flex align-items-center">
                                         <div class="chat-user-img me-3 ms-0">
                                             <div class="avatar-xs">
@@ -1135,7 +1135,7 @@
                             </li>
 
                             <li>
-                                <a href="#">
+                                <a href="#" class="chat-list-item">
                                     <div class="d-flex align-items-center">
                                         <div class="chat-user-img me-3 ms-0">
                                             <div class="avatar-xs">
@@ -1152,7 +1152,7 @@
                             </li>
 
                             <li>
-                                <a href="#">
+                                <a href="#" class="chat-list-item">
                                     <div class="d-flex align-items-center">
                                         <div class="chat-user-img me-3 ms-0">
                                             <div class="avatar-xs">
@@ -1462,7 +1462,8 @@
                                         </div>
                                         <div class="dropdown">
                                             <a href="#" class="text-muted dropdown-toggle"
-                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
                                                 <i class="ri-more-2-fill"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-end">
