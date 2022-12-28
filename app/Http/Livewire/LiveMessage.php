@@ -184,6 +184,6 @@ class LiveMessage extends Component
      */
     public function render(): View
     {
-        return view('livewire.chat-ui')->layout('layouts.b-layout', []);
+        return view('livewire.live-message');
     }
 }

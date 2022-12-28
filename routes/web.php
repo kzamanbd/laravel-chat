@@ -16,15 +16,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', fn () => redirect('/dashboard'));
-Route::get('ui-chat', function () {
-    return view('chat-ui');
-})->name('chat-ui');
 
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', LiveMessage::class)->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::view('chat', 'chat-ui')->name('chat-ui');
 });
 
 require __DIR__ . '/auth.php';
