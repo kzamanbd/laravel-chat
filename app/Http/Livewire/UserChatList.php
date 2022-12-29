@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class UserChatList extends Component
 {
+    public $conversationId;
     /**
      * @return Collection
      */
@@ -21,6 +22,12 @@ class UserChatList extends Component
             ->with(['from', 'to'])
             ->withCount(['unreadMessage'])
             ->get();
+    }
+
+    public function userConversationClick($id)
+    {
+        $this->conversationId = $id;
+        $this->emit('userConversationClick', $id);
     }
     /**
      * @return View

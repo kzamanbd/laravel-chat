@@ -1,9 +1,9 @@
 <ul class="list-unstyled chat-list chat-user-list">
     @foreach ($this->conversations as $item)
         <li @class([
-            'active' => isset($conversation) && $conversation->id == $item->id,
+            'active' => $conversationId == $item->id,
         ])>
-            <div class="chat-list-item" wire:click="getMessage({{ $item->id }})" role="button">
+            <div class="chat-list-item" wire:click="userConversationClick({{ $item->id }})" role="button">
                 <div class="d-flex">
                     <div class="chat-user-img online align-self-center me-3 ms-0">
                         <img src="{{ $item->user_avatar }}" class="rounded-circle avatar-xs" />
@@ -26,7 +26,7 @@
         </li>
     @endforeach
     <li class="unread">
-        <a href="#" class="chat-list-item">
+        <div class="chat-list-item" role="button">
             <div class="d-flex">
                 <div class="chat-user-img away align-self-center me-3 ms-0">
                     <img src="{{ asset('chat-ui/images/users/avatar-3.jpg') }}" class="rounded-circle avatar-xs" />
@@ -43,10 +43,10 @@
                     <span class="badge badge-soft-danger rounded-pill">02</span>
                 </div>
             </div>
-        </a>
+        </div>
     </li>
     <li>
-        <a href="#" class="chat-list-item">
+        <div class="chat-list-item" role="button">
             <div class="d-flex">
                 <div class="chat-user-img away align-self-center me-3 ms-0">
                     <img src="{{ asset('chat-ui/images/users/avatar-6.jpg') }}" class="rounded-circle avatar-xs" />
@@ -61,10 +61,10 @@
                 </div>
                 <div class="font-size-11">03:20 PM</div>
             </div>
-        </a>
+        </div>
     </li>
     <li class="typing">
-        <a href="#" class="chat-list-item">
+        <div class="chat-list-item" role="button">
             <div class="d-flex">
                 <div class="chat-user-img align-self-center online me-3 ms-0">
                     <div class="avatar-xs">
@@ -86,6 +86,6 @@
                 </div>
                 <div class="font-size-11">04:56 PM</div>
             </div>
-        </a>
+        </div>
     </li>
 </ul>

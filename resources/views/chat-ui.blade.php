@@ -119,7 +119,8 @@
                 <div class="w-100 overflow-hidden position-relative">
                     @livewire('user-head')
                     <!-- start chat conversation -->
-                    <div class="chat-conversation p-3 p-lg-4" data-simplebar="init">
+                    <div class="chat-conversation p-3 p-lg-4" data-simplebar="init" x-data="scrollData"
+                        @scroll-bottom.window="scrollToBottom()">
                         @livewire('user-chat-detail')
                     </div>
                     <!-- end chat conversation end -->
@@ -494,4 +495,23 @@
         </div>
         <!-- end modal -->
     </div>
+    <x-slot name="footer">
+        <script>
+            // alpine init
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('scrollData', () => ({
+                    init() {
+                        this.$nextTick(() => {
+                            this.scrollToBottom();
+                        })
+                    },
+                    scrollToBottom() {
+                        const selector = '.chat-conversation .simplebar-content-wrapper';
+                        const element = document.querySelector(selector);
+                        element.scrollTo(0, element.scrollHeight);
+                    }
+                }))
+            })
+        </script>
+    </x-slot>
 </x-b-layout>
