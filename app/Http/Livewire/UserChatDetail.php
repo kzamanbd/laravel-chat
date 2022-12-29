@@ -13,7 +13,6 @@ use App\Events\MessageSeenTime;
 class UserChatDetail extends Component
 {
     public Conversation $conversation;
-    public bool $isSelected = false;
 
     protected $listeners = [
         'userConversationClick' => 'userConversationClick',
@@ -21,7 +20,6 @@ class UserChatDetail extends Component
 
     public function userConversationClick($id)
     {
-        $this->isSelected = true;
         $this->conversation = Conversation::with(['from', 'to', 'messages'])->find($id);
         $this->dispatchBrowserEvent('scroll-bottom');
         // $this->emit('connect', $this->conversation);
