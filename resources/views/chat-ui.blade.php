@@ -1,5 +1,5 @@
 <x-b-layout>
-    <div class="layout-wrapper d-lg-flex">
+    <div class="layout-wrapper d-lg-flex" x-data="chatData">
         <!-- Start left sidebar-menu -->
         <div class="side-menu flex-lg-column me-lg-1 ms-lg-0">
             <!-- LOGO -->
@@ -119,7 +119,7 @@
                 <div class="w-100 overflow-hidden position-relative">
                     @livewire('user-head')
                     <!-- start chat conversation -->
-                    <div class="chat-conversation p-3 p-lg-4" data-simplebar="init" x-data="scrollData"
+                    <div class="chat-conversation p-3 p-lg-4" data-simplebar="init"
                         @scroll-bottom.window="scrollToBottom()">
                         @livewire('user-chat-detail')
                     </div>
@@ -499,7 +499,7 @@
         <script>
             // alpine init
             document.addEventListener('alpine:init', () => {
-                Alpine.data('scrollData', () => ({
+                Alpine.data('chatData', () => ({
                     init() {
                         this.$nextTick(() => {
                             this.scrollToBottom();
@@ -509,7 +509,7 @@
                         const selector = '.chat-conversation .simplebar-content-wrapper';
                         const element = document.querySelector(selector);
                         element.scrollTo(0, element.scrollHeight);
-                    }
+                    },
                 }))
             })
         </script>

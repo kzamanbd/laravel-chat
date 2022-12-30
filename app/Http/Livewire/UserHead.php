@@ -12,10 +12,10 @@ class UserHead extends Component
     public Conversation $conversation;
 
     protected $listeners = [
-        'userConversationClick' => 'userConversationClick',
+        'userConversationSelected' => 'userConversationSelected',
     ];
 
-    public function userConversationClick($id)
+    public function userConversationSelected($id)
     {
         $this->conversation = Conversation::find($id);
     }

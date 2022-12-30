@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 class UserChatList extends Component
 {
     public $conversationId;
+
     /**
      * @return Collection
      */
@@ -27,7 +28,7 @@ class UserChatList extends Component
     public function userConversationClick($id)
     {
         $this->conversationId = $id;
-        $this->emit('userConversationClick', $id);
+        $this->emit('userConversationSelected', $id);
     }
     /**
      * @return View

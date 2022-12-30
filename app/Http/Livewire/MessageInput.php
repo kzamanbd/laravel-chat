@@ -8,6 +8,16 @@ use Illuminate\View\View;
 
 class MessageInput extends Component
 {
+    public $conversationId;
+
+    protected $listeners = [
+        'userConversationSelected' => 'userConversationSelected',
+    ];
+
+    public function userConversationSelected($conversationId)
+    {
+        $this->conversationId = $conversationId;
+    }
     /**
      * @return View
      */

@@ -15,10 +15,10 @@ class UserChatDetail extends Component
     public Conversation $conversation;
 
     protected $listeners = [
-        'userConversationClick' => 'userConversationClick',
+        'userConversationSelected' => 'userConversationSelected',
     ];
 
-    public function userConversationClick($id)
+    public function userConversationSelected($id)
     {
         $this->conversation = Conversation::with(['from', 'to', 'messages'])->find($id);
         $this->dispatchBrowserEvent('scroll-bottom');
