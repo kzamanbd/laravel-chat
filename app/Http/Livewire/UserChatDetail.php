@@ -21,7 +21,7 @@ class UserChatDetail extends Component
     public function userConversationSelected($id)
     {
         $this->conversation = Conversation::with(['from', 'to', 'messages'])->find($id);
-        $this->dispatchBrowserEvent('scroll-bottom');
+        $this->dispatchBrowserEvent('show-chat-detail');
         // $this->emit('connect', $this->conversation);
         $this->updateMessageStatus($id);
     }

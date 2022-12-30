@@ -1,5 +1,5 @@
 <x-b-layout>
-    <div class="layout-wrapper d-lg-flex" x-data="chatData">
+    <div class="layout-wrapper d-lg-flex">
         <!-- Start left sidebar-menu -->
         <div class="side-menu flex-lg-column me-lg-1 ms-lg-0">
             <!-- LOGO -->
@@ -113,18 +113,20 @@
         @include('layouts.partials.left-sidebar')
 
         <!-- Start User chat -->
-        <div class="user-chat w-100 overflow-hidden user-chat-show">
+        <div class="user-chat w-100 overflow-hidden">
             <div class="d-lg-flex">
                 <!-- start chat conversation section -->
-                <div class="w-100 overflow-hidden position-relative">
+                <div id="user-chat-detail" class="w-100 overflow-hidden position-relative d-none">
                     @livewire('user-head')
                     <!-- start chat conversation -->
-                    <div class="chat-conversation p-3 p-lg-4" data-simplebar="init"
-                        @scroll-bottom.window="scrollToBottom()">
+                    <div class="chat-conversation p-3 p-lg-4" data-simplebar="init">
                         @livewire('user-chat-detail')
                     </div>
                     <!-- end chat conversation end -->
                     @livewire('message-input')
+                </div>
+                <div class="user-chat-empty d-none d-lg-flex">
+                    <h3>No chat selected</h3>
                 </div>
                 <!-- end chat conversation section -->
 
@@ -497,21 +499,17 @@
     </div>
     <x-slot name="footer">
         <script>
-            // alpine init
-            document.addEventListener('alpine:init', () => {
-                Alpine.data('chatData', () => ({
-                    init() {
-                        this.$nextTick(() => {
-                            this.scrollToBottom();
-                        })
-                    },
-                    scrollToBottom() {
-                        const selector = '.chat-conversation .simplebar-content-wrapper';
-                        const element = document.querySelector(selector);
-                        element.scrollTo(0, element.scrollHeight);
-                    },
-                }))
-            })
+            document.addEventListener('show-chat-detail', () => {
+                // Show chat detail
+                document.getElementById('user-chat-detail').classList.remove('d-none');
+                document.querySelector('.user-chat-empty').classList.remove('d-lg-flex');
+                document.querySelector('.user-chat').classList.add('user-chat-show');
+
+                // Scroll to bottom
+                const selector = '.chat-conversation .simplebar-content-wrapper';
+                const element = document.querySelector(selector);
+                element.scrollTo(0, element.scrollHeight);
+            });
         </script>
     </x-slot>
 </x-b-layout>
