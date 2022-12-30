@@ -22,6 +22,7 @@ class UserChatList extends Component
             ->orWhere('to_user_id', auth()->id())
             ->with(['from', 'to'])
             ->withCount(['unreadMessage'])
+            ->orderBy('updated_at', 'desc')
             ->get();
     }
 

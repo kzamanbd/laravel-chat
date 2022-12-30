@@ -55,6 +55,7 @@ class LiveMessage extends Component
             }
             $conversationId = $conversation->id;
             broadcast(new ConversationCreated($conversation))->toOthers();
+            $conversation->update(['updated_at' => now()]);
         } else {
             $conversationId = $this->conversation->id;
         }

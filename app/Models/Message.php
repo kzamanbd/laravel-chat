@@ -11,7 +11,11 @@ class Message extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $appends = ['user_avatar', 'last_seen_time'];
+    protected $appends = [
+        'username',
+        'user_avatar',
+        'last_seen_time'
+    ];
 
     /**
      * The attributes that should be cast.
@@ -39,6 +43,10 @@ class Message extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    public function getUserNameAttribute(): string
+    {
+        return $this->user->name;
+    }
     public function getUserAvatarAttribute(): string
     {
         return $this->user->user_avatar;

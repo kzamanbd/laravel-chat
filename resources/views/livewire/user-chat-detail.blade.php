@@ -388,6 +388,56 @@
                 </div>
             </li>
 
+            @foreach ($messages as $messageDate => $messageList)
+                <li>
+                    <div class="chat-day-title">
+                        <span class="title">{{ $messageDate }}</span>
+                    </div>
+                </li>
+
+                @foreach ($messageList as $item)
+                    <li @class(['right' => auth()->id() == $item->user_id])>
+                        <div class="conversation-list">
+                            <div class="chat-avatar">
+                                <img src="{{ $item->user_avatar }}" />
+                            </div>
+
+                            <div class="user-chat-content">
+                                <div class="ctext-wrap">
+                                    <div class="ctext-wrap-content">
+                                        <p class="mb-0">
+                                            {{ $item->message }}
+                                        </p>
+                                        <p class="chat-time mb-0">
+                                            <i class="ri-time-line align-middle"></i>
+                                            <span class="align-middle">
+                                                {{ $item->created_at->diffForHumans() }}
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div class="dropdown align-self-start">
+                                        <a class="dropdown-toggle" href="#" role="button"
+                                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="ri-more-2-fill"></i>
+                                        </a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#">Copy <i
+                                                    class="ri-file-copy-line float-end text-muted"></i></a>
+                                            <a class="dropdown-item" href="#">Save <i
+                                                    class="ri-save-line float-end text-muted"></i></a>
+                                            <a class="dropdown-item" href="#">Forward
+                                                <i class="ri-chat-forward-line float-end text-muted"></i></a>
+                                            <a class="dropdown-item" href="#">Delete
+                                                <i class="ri-delete-bin-line float-end text-muted"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="conversation-name">{{ $item->username }}</div>
+                            </div>
+                        </div>
+                    </li>
+                @endforeach
+            @endforeach
             <li>
                 <div class="conversation-list">
                     <div class="chat-avatar">

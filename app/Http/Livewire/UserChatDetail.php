@@ -13,6 +13,7 @@ use App\Events\MessageSeenTime;
 class UserChatDetail extends Component
 {
     public Conversation $conversation;
+    public $messages;
 
     protected $listeners = [
         'userConversationSelected' => 'userConversationSelected',
@@ -21,9 +22,11 @@ class UserChatDetail extends Component
     public function userConversationSelected($id)
     {
         $this->conversation = Conversation::with(['from', 'to', 'messages'])->find($id);
+
+        $this->messages = collect($this->conversation->messages)->groupBy(function ($message) {
+            return $message->created_at->format('d-m-Y');
+        });
         $this->dispatchBrowserEvent('show-chat-detail');
-        // $this->emit('connect', $this->conversation);
-        $this->updateMessageStatus($id);
     }
 
     /**

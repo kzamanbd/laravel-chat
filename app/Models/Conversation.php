@@ -76,12 +76,22 @@ class Conversation extends Model
 
     public function getLatestMessageAttribute(): string
     {
-        return $this->messages->last()->message ?? '';
+        if ($this->messages->last()) {
+            if ($this->messages->last()->user_id == auth()->id()) {
+                return 'You: ' . $this->messages->last()->message;
+            } else {
+                return $this->messages->last()->message;
+            }
+        }
+        return '';
     }
 
     public function getLatestMessageTimeAttribute(): string
     {
-        return $this->messages->last()->created_at->diffForHumans() ?? '';
+        if ($this->messages->last()) {
+            return $this->messages->last()->created_at->diffForHumans() ?? '';
+        }
+        return '';
     }
 
     public function getUnreadMessageCountAttribute(): int
