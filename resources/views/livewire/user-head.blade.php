@@ -5,7 +5,7 @@
                 <div class="d-flex align-items-center">
                     <div class="d-block d-lg-none me-2 ms-0">
                         <a href="javascript: void(0);" class="user-chat-remove text-muted font-size-16 p-2"
-                            @click="showChatDetail = false"><i class="ri-arrow-left-s-line"></i></a>
+                            @click="userChatRemove"><i class="ri-arrow-left-s-line"></i></a>
                     </div>
                     <div class="me-3 ms-0">
                         <img src="{{ $conversation->user_avatar }}" class="rounded-circle avatar-xs" />
@@ -62,20 +62,29 @@
                                 <i class="ri-more-fill"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item d-block d-lg-none user-profile-show" href="#">View profile
-                                    <i class="ri-user-2-line float-end text-muted"></i></a>
+                                <a class="dropdown-item d-block d-lg-none user-profile-show" href="#"
+                                    @click="showUserProfile = true">
+                                    View profile
+                                    <i class="ri-user-2-line float-end text-muted"></i>
+                                </a>
                                 <a class="dropdown-item d-block d-lg-none" href="#" data-bs-toggle="modal"
-                                    data-bs-target="#audiocallModal">Audio <i
-                                        class="ri-phone-line float-end text-muted"></i></a>
+                                    data-bs-target="#audiocallModal">
+                                    Audio
+                                    <i class="ri-phone-line float-end text-muted"></i>
+                                </a>
                                 <a class="dropdown-item d-block d-lg-none" href="#" data-bs-toggle="modal"
-                                    data-bs-target="#videocallModal">Video <i
-                                        class="ri-vidicon-line float-end text-muted"></i></a>
-                                <a class="dropdown-item" href="#">Archive <i
-                                        class="ri-archive-line float-end text-muted"></i></a>
-                                <a class="dropdown-item" href="#">Muted <i
-                                        class="ri-volume-mute-line float-end text-muted"></i></a>
-                                <a class="dropdown-item" href="#">Delete <i
-                                        class="ri-delete-bin-line float-end text-muted"></i></a>
+                                    data-bs-target="#videocallModal">
+                                    Video <i class="ri-vidicon-line float-end text-muted"></i>
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    Archive <i class="ri-archive-line float-end text-muted"></i>
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    Muted <i class="ri-volume-mute-line float-end text-muted"></i>
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    Delete <i class="ri-delete-bin-line float-end text-muted"></i>
+                                </a>
                             </div>
                         </div>
                     </li>

@@ -113,7 +113,7 @@
         @include('layouts.partials.left-sidebar')
 
         <!-- Start User chat -->
-        <div class="user-chat w-100 overflow-hidden" :class="{ 'user-chat-show': showChatDetail }">
+        <div class="user-chat w-100 overflow-hidden">
             <div class="d-lg-flex">
                 <!-- start chat conversation section -->
                 <div id="user-chat-detail" class="w-100 overflow-hidden position-relative d-none">
@@ -503,7 +503,9 @@
             document.addEventListener('alpine:init', () => {
                 Alpine.data('chatData', () => ({
                     showUserProfile: false,
-                    showChatDetail: false
+                    userChatRemove() {
+                        document.querySelector('.user-chat').classList.remove('user-chat-show');
+                    }
                 }))
             })
             document.addEventListener('show-chat-detail', () => {
