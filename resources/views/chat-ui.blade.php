@@ -1,5 +1,5 @@
 <x-b-layout>
-    <div class="layout-wrapper d-lg-flex">
+    <div class="layout-wrapper d-lg-flex" x-data="chatData">
         <!-- Start left sidebar-menu -->
         <div class="side-menu flex-lg-column me-lg-1 ms-lg-0">
             <!-- LOGO -->
@@ -113,7 +113,7 @@
         @include('layouts.partials.left-sidebar')
 
         <!-- Start User chat -->
-        <div class="user-chat w-100 overflow-hidden">
+        <div class="user-chat w-100 overflow-hidden" :class="{ 'user-chat-show': showChatDetail }">
             <div class="d-lg-flex">
                 <!-- start chat conversation section -->
                 <div id="user-chat-detail" class="w-100 overflow-hidden position-relative d-none">
@@ -131,10 +131,11 @@
                 <!-- end chat conversation section -->
 
                 <!-- start User profile detail sidebar -->
-                <div class="user-profile-sidebar">
+                <div class="user-profile-sidebar" :class="{ 'd-block': showUserProfile }">
                     <div class="px-3 px-lg-4 pt-3 pt-lg-4">
                         <div class="user-chat-nav text-end">
-                            <button type="button" class="btn nav-btn" id="user-profile-hide">
+                            <button type="button" class="btn nav-btn" id="user-profile-hide"
+                                @click="showUserProfile = false">
                                 <i class="ri-close-line"></i>
                             </button>
                         </div>
@@ -499,6 +500,12 @@
     </div>
     <x-slot name="footer">
         <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('chatData', () => ({
+                    showUserProfile: false,
+                    showChatDetail: false
+                }))
+            })
             document.addEventListener('show-chat-detail', () => {
                 // Show chat detail
                 document.getElementById('user-chat-detail').classList.remove('d-none');

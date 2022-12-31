@@ -24,7 +24,7 @@ class UserChatDetail extends Component
         $this->conversation = Conversation::with(['from', 'to', 'messages'])->find($id);
 
         $this->messages = collect($this->conversation->messages)->groupBy(function ($message) {
-            return $message->created_at->format('d-m-Y');
+            return $message->created_at->format('d-M-Y');
         });
         $this->dispatchBrowserEvent('show-chat-detail');
     }

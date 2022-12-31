@@ -4,8 +4,8 @@
             <div class="col-sm-4 col-8">
                 <div class="d-flex align-items-center">
                     <div class="d-block d-lg-none me-2 ms-0">
-                        <a href="javascript: void(0);" class="user-chat-remove text-muted font-size-16 p-2"><i
-                                class="ri-arrow-left-s-line"></i></a>
+                        <a href="javascript: void(0);" class="user-chat-remove text-muted font-size-16 p-2"
+                            @click="showChatDetail = false"><i class="ri-arrow-left-s-line"></i></a>
                     </div>
                     <div class="me-3 ms-0">
                         <img src="{{ $conversation->user_avatar }}" class="rounded-circle avatar-xs" />
@@ -50,7 +50,7 @@
                     </li>
 
                     <li class="list-inline-item d-none d-lg-inline-block me-2 ms-0">
-                        <button type="button" class="btn nav-btn user-profile-show">
+                        <button type="button" class="btn nav-btn user-profile-show" @click="showUserProfile = true">
                             <i class="ri-user-2-line"></i>
                         </button>
                     </li>

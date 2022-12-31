@@ -44,21 +44,21 @@ class Conversation extends Model
             ->where('is_seen', 0);
     }
 
-    public function getUserName()
+    public function getUserInfo()
     {
         return $this->to_user_id == auth()->id()
-            ? $this->from->name
-            : $this->to->name;
+            ? $this->from
+            : $this->to;
     }
 
     public function getUsernameAttribute(): string
     {
-        return $this->getUserName();
+        return $this->getUserInfo()->name;
     }
 
     public function getUserAvatarAttribute(): string
     {
-        $name = urlencode($this->getUserName());
+        $name = urlencode($this->getUserInfo()->name);
         return "https://ui-avatars.com/api/?background=d5d3f8&color=7269ef&name=$name";
     }
 

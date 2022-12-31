@@ -391,7 +391,9 @@
             @foreach ($messages as $messageDate => $messageList)
                 <li>
                     <div class="chat-day-title">
-                        <span class="title">{{ $messageDate }}</span>
+                        <span class="title">
+                            {{ date('d-M-Y') == $messageDate ? 'Today' : $messageDate }}
+                        </span>
                     </div>
                 </li>
 
