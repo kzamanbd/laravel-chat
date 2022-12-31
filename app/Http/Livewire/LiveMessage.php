@@ -55,7 +55,6 @@ class LiveMessage extends Component
             }
             $conversationId = $conversation->id;
             broadcast(new ConversationCreated($conversation))->toOthers();
-            $conversation->update(['updated_at' => now()]);
         } else {
             $conversationId = $this->conversation->id;
         }
@@ -65,6 +64,7 @@ class LiveMessage extends Component
             'user_id' => Auth::id(),
             'message' => $this->messageText
         ]);
+        $message->conversation->update(['updated_at' => now()]);
         broadcast(new MessageCreated($message))->toOthers();
         $this->messageText = null;
         $this->getMessage($conversationId);
@@ -94,6 +94,7 @@ class LiveMessage extends Component
             ->orWhere('to_user_id', Auth::id())
             ->with(['from', 'to'])
             ->withCount(['unreadMessage'])
+            ->orderBy('updated_at', 'desc')
             ->get();
     }
 
