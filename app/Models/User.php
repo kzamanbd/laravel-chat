@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -55,7 +56,7 @@ class User extends Authenticatable
      */
     public function getIsOnlineAttribute(): bool
     {
-        return cache()->has("last_active_at$this->id");
+        return cache()->has("is_online$this->id");
     }
 
     public function getLastActiveAtAttribute()
