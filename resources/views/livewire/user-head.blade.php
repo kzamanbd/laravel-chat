@@ -13,7 +13,9 @@
                     <div class="flex-grow-1 overflow-hidden">
                         <h5 class="font-size-16 mb-0 text-truncate">
                             <a href="#" class="text-reset user-profile-show">{{ $conversation->username }}</a>
-                            <i class="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i>
+                            @if ($conversation->is_online)
+                                <i class="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i>
+                            @endif
                         </h5>
                     </div>
                 </div>
