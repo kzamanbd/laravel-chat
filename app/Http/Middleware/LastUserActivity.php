@@ -19,7 +19,7 @@ class LastUserActivity
         if (auth()->check()) {
             $expiresAt = now()->addMinutes(2);
             $key = auth()->id();
-            cache()->put("is-online-$key", true, $expiresAt);
+            cache()->put("last_active_at$key", now(), $expiresAt);
         }
         return $next($request);
     }

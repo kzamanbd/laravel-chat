@@ -78,7 +78,7 @@ class Conversation extends Model
             ? $this->from_user_id
             : $this->to_user_id;
 
-        return cache()->has("is-online-$key");
+        return cache()->has("last_active_at$key");
     }
 
     public function getLatestMessageAttribute(): string

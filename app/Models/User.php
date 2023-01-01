@@ -13,7 +13,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $appends = ['user_avatar', 'is_online'];
+    protected $appends = ['user_avatar', 'is_online', 'last_active_at'];
     /**
      * The attributes that are mass assignable.
      *
@@ -55,6 +55,11 @@ class User extends Authenticatable
      */
     public function getIsOnlineAttribute(): bool
     {
-        return cache()->has("is-online-$this->id");
+        return cache()->has("last_active_at$this->id");
+    }
+
+    public function getLastActiveAtAttribute()
+    {
+        return cache()->get("last_active_at$this->id");
     }
 }
