@@ -1,8 +1,8 @@
 <!-- start chat input section -->
 <div class="chat-input-section p-3 p-lg-4 border-top mb-0">
-    <div class="row g-0">
+    <form wire:submit.prevent="sendMessage" class="row g-0">
         <div class="col">
-            <input type="text" class="form-control form-control-lg bg-light border-light"
+            <input wire:model="messageText" type="text" class="form-control form-control-lg bg-light border-light"
                 placeholder="Enter Message..." />
         </div>
         <div class="col-auto">
@@ -29,6 +29,6 @@
                 </ul>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <!-- end chat input section -->

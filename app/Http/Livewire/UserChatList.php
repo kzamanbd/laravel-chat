@@ -12,6 +12,10 @@ class UserChatList extends Component
 {
     public $conversationId;
 
+    protected $listeners = [
+        'refreshConversationList' => '$refresh',
+    ];
+
     /**
      * @return Collection
      */

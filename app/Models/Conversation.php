@@ -22,6 +22,13 @@ class Conversation extends Model
         'unread_message_count',
     ];
 
+    // get user data
+    public function getUserData()
+    {
+        $userId = $this->to_user_id == auth()->id() ? 'from_user_id' : 'to_user_id';
+        return $this->hasOne(User::class, 'id', $userId);
+    }
+
     public function from(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'from_user_id');

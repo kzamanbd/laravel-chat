@@ -9,15 +9,15 @@ use App\Models\Conversation;
 
 class UserHead extends Component
 {
-    public Conversation $conversation;
+    public $conversation;
 
     protected $listeners = [
-        'userConversationSelected' => 'userConversationSelected',
+        'conversationSelected' => 'conversationSelected',
     ];
 
-    public function userConversationSelected($id)
+    public function conversationSelected(Conversation $conversation)
     {
-        $this->conversation = Conversation::find($id);
+        $this->conversation = $conversation;
     }
 
     /**
