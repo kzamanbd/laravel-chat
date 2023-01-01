@@ -17,7 +17,7 @@
                             {{ $item->username }}
                         </h5>
                         <p class="chat-user-message text-truncate mb-0">
-                            {{ $item->latest_message }}
+                            {!! $item->latest_message !!}
                         </p>
                     </div>
                     <div class="font-size-11">{{ $item->latest_message_time }}</div>

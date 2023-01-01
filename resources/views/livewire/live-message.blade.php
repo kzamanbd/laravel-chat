@@ -212,7 +212,7 @@
                                                     class="flex flex-col space-y-2 text-xs max-w-xs mx-2 {{ auth()->id() == $message->user_id ? 'order-1 items-end' : 'order-2 items-start' }}">
                                                     <span
                                                         class="px-4 py-2 rounded-lg inline-block {{ auth()->id() == $message->user_id ? 'rounded-br-none bg-blue-600 text-white' : 'rounded-bl-none bg-gray-300 text-gray-600' }}">
-                                                        {{ $message->message }}
+                                                        {!! $message->message !!}
                                                     </span>
                                                 </div>
                                                 <img src="https://ui-avatars.com/api/?background=random&name={{ $message->user_avatar }}"

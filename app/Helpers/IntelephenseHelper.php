@@ -11,12 +11,12 @@ interface View extends Renderable
      * @param array $data
      * @return $this
      */
-    public function layout(string $layout, array $data): static;
+    public function layout(string $layout, array $data);
 
 
     /**
      * @param array $data
      * @return $this
      */
-    public function layoutData(array $data): static;
+    public function layoutData(array $data);
 }

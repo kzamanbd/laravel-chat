@@ -408,7 +408,7 @@
                                 <div class="ctext-wrap">
                                     <div class="ctext-wrap-content">
                                         <p class="mb-0">
-                                            {{ $item->message }}
+                                            {!! $item->message !!}
                                         </p>
                                         <p class="chat-time mb-0">
                                             <i class="ri-time-line align-middle"></i>
