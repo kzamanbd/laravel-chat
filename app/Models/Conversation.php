@@ -84,13 +84,15 @@ class Conversation extends Model
     public function getLatestMessageAttribute(): string
     {
         if ($this->messages->last()) {
+            // remove html tags
+            $message = strip_tags($this->messages->last()->message);
             if ($this->messages->last()->user_id == auth()->id()) {
-                return 'You: ' . $this->messages->last()->message;
+                return "You: $message";
             } else {
-                return $this->messages->last()->message;
+                return $message;
             }
         }
-        return '';
+        return 'No message yet';
     }
 
     public function getLatestMessageTimeAttribute(): string
