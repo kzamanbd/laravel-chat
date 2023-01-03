@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Helpers;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -61,6 +62,6 @@ class User extends Authenticatable
 
     public function getLastActiveAtAttribute()
     {
-        return cache()->get("last_active_at$this->id");
+        return Helpers::getLastActiveAt($this->id);
     }
 }

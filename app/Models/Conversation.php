@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Helpers\Helpers;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,6 +22,7 @@ class Conversation extends Model
         'latest_message',
         'latest_message_time',
         'unread_message_count',
+        'last_active_at'
     ];
 
     // get user data
@@ -81,6 +84,14 @@ class Conversation extends Model
         return cache()->has("is_online$key");
     }
 
+    public function getLastActiveAtAttribute()
+    {
+        $key = $this->to_user_id == auth()->id()
+            ? $this->from_user_id
+            : $this->to_user_id;
+        return Helpers::getLastActiveAt($key);
+    }
+
     public function getLatestMessageAttribute(): string
     {
         if ($this->messages->last()) {
@@ -98,7 +109,21 @@ class Conversation extends Model
     public function getLatestMessageTimeAttribute(): string
     {
         if ($this->messages->last()) {
-            return $this->messages->last()->created_at->diffForHumans() ?? '';
+            $createdAt = $this->messages->last()->created_at;
+            // get date week name
+            $date = $createdAt->format('Y-m-d');
+            $week = $createdAt->format('l');
+            $time = $createdAt->format('h:i A');
+
+            if ($date == date('Y-m-d')) {
+                return $time;
+            } else if ($date == date('Y-m-d', strtotime('-1 day'))) {
+                return "Yesterday $time";
+            } else if ($date > date('Y-m-d', strtotime('-1 week'))) {
+                return "$week $time";
+            } else {
+                return $createdAt->format('d M Y');
+            }
         }
         return '';
     }

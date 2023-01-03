@@ -8,7 +8,7 @@ use App\Models\Conversation;
 use App\Events\MessageCreated;
 use App\Events\MessageSeenTime;
 use App\Events\ConversationCreated;
-use App\Helpers\Constrains;
+use App\Helpers\Helpers;
 use Livewire\Component;
 use Illuminate\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -60,9 +60,9 @@ class LiveMessage extends Component
             $conversationId = $this->conversation->id;
         }
 
-        $messageText = preg_replace(Constrains::LINK_REGEX, Constrains::LINK_REPLACE, $this->messageText);
-        $messageText = preg_replace(Constrains::EMAIL_REGEX, Constrains::EMAIL_REPLACE, $messageText);
-        $messageText = preg_replace(Constrains::PHONE_REGEX, Constrains::PHONE_REPLACE, $messageText);
+        $messageText = preg_replace(Helpers::LINK_REGEX, Helpers::LINK_REPLACE, $this->messageText);
+        $messageText = preg_replace(Helpers::EMAIL_REGEX, Helpers::EMAIL_REPLACE, $messageText);
+        $messageText = preg_replace(Helpers::PHONE_REGEX, Helpers::PHONE_REPLACE, $messageText);
 
         $message = Message::create([
             'conversation_id' => $conversationId,

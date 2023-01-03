@@ -17,7 +17,11 @@
                 {{ $conversation->username }}
             </h5>
             <p class="text-muted text-truncate mb-1">
-                <i class="ri-record-circle-fill font-size-10 text-success me-1 ms-0"></i> Active
+                @if ($conversation->is_online)
+                    <i class="ri-record-circle-fill font-size-10 text-success me-1 ms-0"></i> Active
+                @else
+                    {{ $conversation->last_active_at }}
+                @endif
             </p>
         </div>
         <!-- End profile user -->
