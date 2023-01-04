@@ -265,6 +265,27 @@
                 const element = document.querySelector(selector);
                 element.scrollTo(0, element.scrollHeight);
             });
+
+            window.livewire.on('connect', (message) => {
+                window.Echo.channel(`message.${message.id}`).on('message.created', (response) => {
+                    console.log('connected', response);
+                    window.livewire.emit('userConversationSelected', message.id);
+                });
+                window.Echo.channel(`lastSeenTime.${message.id}`).on('message.seen', (response) => {
+                    console.log('lastSeenTime', response);
+                    window.livewire.emit('userConversationSelected', message.id);
+                });
+            });
+            window.onload = function() {
+                window.Echo.channel('conversation.{{ auth()->id() }}').on('conversation.created', (response) => {
+                    console.log('conversation.created', response);
+                    window.livewire.emit('refreshConversationList');
+                });
+                window.Echo.channel('notify.message.{{ auth()->id() }}').on('message.created', (response) => {
+                    console.log('nofity.message', response);
+                    window.livewire.emit('refreshConversationList');
+                });
+            }
         </script>
     </x-slot>
 </x-b-layout>

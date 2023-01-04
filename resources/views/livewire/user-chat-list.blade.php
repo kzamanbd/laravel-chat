@@ -1,8 +1,6 @@
 <ul class="list-unstyled chat-list chat-user-list">
     @foreach ($this->conversations as $item)
-        <li @class([
-            'active' => $conversationId == $item->id,
-        ])>
+        <li @class(['active' => $conversationId == $item->id])>
             <div class="chat-list-item" wire:click="userConversationClick({{ $item->id }})" role="button">
                 <div class="d-flex">
                     <div class="chat-user-img online align-self-center me-3 ms-0">
@@ -16,7 +14,10 @@
                         <h5 class="text-truncate font-size-15 mb-1">
                             {{ $item->username }}
                         </h5>
-                        <p class="chat-user-message text-truncate mb-0">
+                        <p @class([
+                            'chat-user-message text-truncate mb-0',
+                            'fw-bold text-dark' => $item->unread_message_count > 0,
+                        ])>
                             {!! $item->latest_message !!}
                         </p>
                     </div>
