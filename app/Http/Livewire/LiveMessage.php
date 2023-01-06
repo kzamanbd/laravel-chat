@@ -69,8 +69,12 @@ class LiveMessage extends Component
             'user_id' => Auth::id(),
             'message' => $messageText
         ]);
-        $message->conversation->update(['updated_at' => now()]);
-        broadcast(new MessageCreated($message))->toOthers();
+        $to_user_id = $this->conversation->to_user_id;
+        $from_user_id = $this->conversation->from_user_id;
+        $targetUserId = $to_user_id == auth()->id() ? $from_user_id : $to_user_id;
+        $this->conversation->update(['updated_at' => now()]);
+
+        broadcast(new MessageCreated($message, $conversationId, $targetUserId))->toOthers();
         $this->messageText = null;
         $this->getMessage($conversationId);
     }

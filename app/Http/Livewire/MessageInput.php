@@ -7,10 +7,11 @@ use Livewire\Component;
 use Illuminate\View\View;
 use App\Helpers\Helpers;
 use App\Events\MessageCreated;
+use App\Models\Conversation;
 
 class MessageInput extends Component
 {
-    public $conversationId, $messageText;
+    public $conversation, $messageText;
 
     protected $listeners = [
         'conversationSelected' => 'conversationSelected',
@@ -18,7 +19,7 @@ class MessageInput extends Component
 
     public function conversationSelected($conversationId)
     {
-        $this->conversationId = $conversationId;
+        $this->conversation = Conversation::find($conversationId);
     }
     /**
      * @return void
@@ -34,14 +35,20 @@ class MessageInput extends Component
         $messageText = preg_replace(Helpers::PHONE_REGEX, Helpers::PHONE_REPLACE, $messageText);
 
         $message = Message::create([
-            'conversation_id' => $this->conversationId,
+            'conversation_id' => $this->conversation->id,
             'user_id' => auth()->id(),
             'message' => $messageText
         ]);
-        $message->conversation->update(['updated_at' => now()]);
-        broadcast(new MessageCreated($message))->toOthers();
+
+        $to_user_id = $this->conversation->to_user_id;
+        $from_user_id = $this->conversation->from_user_id;
+        $targetUserId = $to_user_id == auth()->id() ? $from_user_id : $to_user_id;
+        $this->conversation->update(['updated_at' => now()]);
+
+        broadcast(new MessageCreated($message, $this->conversation->id, $targetUserId))->toOthers();
         $this->messageText = null;
-        $this->emit('userConversationSelected', $this->conversationId);
+
+        $this->emit('userConversationSelected', $this->conversation->id);
         $this->emit('refreshConversationList');
     }
     /**

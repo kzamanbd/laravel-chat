@@ -29,7 +29,7 @@
                             class="rounded-circle avatar-lg img-thumbnail" />
                     </div>
 
-                    <h5 class="font-size-16 mb-1 text-truncate">Patricia Smith</h5>
+                    <h5 class="font-size-16 mb-1 text-truncate">{{ auth()->user()->name }}</h5>
                     <p class="text-muted text-truncate mb-1">
                         <i class="ri-record-circle-fill font-size-10 text-success me-1 ms-0 d-inline-block"></i>
                         Active
@@ -62,12 +62,12 @@
                                 <div class="accordion-body">
                                     <div>
                                         <p class="text-muted mb-1">Name</p>
-                                        <h5 class="font-size-14">Patricia Smith</h5>
+                                        <h5 class="font-size-14">{{ auth()->user()->name }}</h5>
                                     </div>
 
                                     <div class="mt-4">
                                         <p class="text-muted mb-1">Email</p>
-                                        <h5 class="font-size-14">adc@123.com</h5>
+                                        <h5 class="font-size-14">{{ auth()->user()->email }}</h5>
                                     </div>
 
                                     <div class="mt-4">

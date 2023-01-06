@@ -3,11 +3,12 @@
         <li @class(['active' => $conversationId == $item->id])>
             <div class="chat-list-item" wire:click="userConversationClick({{ $item->id }})" role="button">
                 <div class="d-flex">
-                    <div class="chat-user-img online align-self-center me-3 ms-0">
+                    <div @class([
+                        'chat-user-img align-self-center me-3 ms-0',
+                        'online' => $item->is_online,
+                    ])>
                         <img src="{{ $item->user_avatar }}" class="rounded-circle avatar-xs" />
-                        @if ($item->is_online)
-                            <span class="user-status"></span>
-                        @endif
+                        <span class="user-status"></span>
                     </div>
 
                     <div class="flex-grow-1 overflow-hidden">
@@ -22,6 +23,13 @@
                         </p>
                     </div>
                     <div class="font-size-11">{{ $item->latest_message_time }}</div>
+                    @if ($item->unread_message_count > 0)
+                        <div class="unread-message">
+                            <span class="badge badge-soft-danger rounded-pill">
+                                {{ $item->unread_message_count }}
+                            </span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </li>
