@@ -440,30 +440,7 @@
                     </li>
                 @endforeach
             @endforeach
-            <li>
-                <div class="conversation-list">
-                    <div class="chat-avatar">
-                        <img src="{{ asset('chat-ui/images/users/avatar-4.jpg') }}" />
-                    </div>
-
-                    <div class="user-chat-content">
-                        <div class="ctext-wrap">
-                            <div class="ctext-wrap-content">
-                                <p class="mb-0">
-                                    typing
-                                    <span class="animate-typing">
-                                        <span class="dot"></span>
-                                        <span class="dot"></span>
-                                        <span class="dot"></span>
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="conversation-name">Doris Brown</div>
-                    </div>
-                </div>
-            </li>
+            @livewire('user-typing')
         </ul>
     @endif
 </div>

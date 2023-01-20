@@ -296,8 +296,12 @@
 
             window.onload = function() {
                 const authId = {{ auth()->id() }};
-                window.Echo.private(`user-typing.${authId}`).listenForWhisper('typing', (e) => {
-                    console.log(e)
+                window.Echo.private(`user-typing.${authId}`).listenForWhisper('typing', (response) => {
+                    console.log(response)
+                    window.livewire.emit('showUserTyping', response);
+                    setTimeout(function() {
+                        window.livewire.emit('hideUserTyping');
+                    }, 2000);
                 });
                 window.Echo.channel(`conversation.${authId}`).on('created', (response) => {
                     console.log('conversation.created', response);
