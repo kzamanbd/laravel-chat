@@ -17,6 +17,11 @@ class MessageInput extends Component
         'conversationSelected' => 'conversationSelected',
     ];
 
+    public function updatedMessageText()
+    {
+        $this->emit('typing', auth()->user());
+    }
+
     public function conversationSelected($conversationId)
     {
         $this->conversation = Conversation::find($conversationId);

@@ -271,16 +271,25 @@
                 element.scrollTo(0, element.scrollHeight);
             });
 
-            window.livewire.on('connection', (message) => {
-                window.Echo.channel(`message.${message.id}`).on('message.created', (response) => {
+            window.livewire.on('connection', (conversationId) => {
+                window.Echo.channel(`message.${conversationId}`).on('message.created', (response) => {
                     console.log('connected', response);
-                    window.livewire.emit('userConversationSelected', message.id);
+                    window.livewire.emit('userConversationSelected', conversationId);
                 });
-                window.Echo.channel(`lastSeenTime.${message.id}`).on('message.seen', (response) => {
+                window.Echo.channel(`lastSeenTime.${conversationId}`).on('message.seen', (response) => {
                     console.log('lastSeenTime', response);
-                    window.livewire.emit('userConversationSelected', message.id);
+                    window.livewire.emit('userConversationSelected', conversationId);
+                });
+
+                window.Echo.channel(`typing.${conversationId}`).listenForWhisper('typing', (e) => {
+                    console.log(e)
                 });
             });
+
+            window.livewire.on('typing', (conversationId) => {
+                console.log(conversationId);
+            });
+
             window.onload = function() {
                 window.Echo.channel('conversation.{{ auth()->id() }}').on('conversation.created', (response) => {
                     console.log('conversation.created', response);
