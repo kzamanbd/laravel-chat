@@ -300,67 +300,7 @@
 
                 <!-- Start user status -->
                 <div class="px-4 pb-4" dir="ltr">
-                    <div class="owl-carousel owl-theme" id="user-status-carousel">
-                        <div class="item">
-                            <a href="#" class="user-status-box">
-                                <div class="avatar-xs mx-auto d-block chat-user-img online">
-                                    <img src="{{ asset('chat-ui/images/users/avatar-2.jpg') }}" alt="user-img"
-                                        class="img-fluid rounded-circle" />
-                                    <span class="user-status"></span>
-                                </div>
-
-                                <h5 class="font-size-13 text-truncate mt-3 mb-1">Patrick</h5>
-                            </a>
-                        </div>
-                        <div class="item">
-                            <a href="#" class="user-status-box">
-                                <div class="avatar-xs mx-auto d-block chat-user-img online">
-                                    <img src="{{ asset('chat-ui/images/users/avatar-4.jpg') }}" alt="user-img"
-                                        class="img-fluid rounded-circle" />
-                                    <span class="user-status"></span>
-                                </div>
-
-                                <h5 class="font-size-13 text-truncate mt-3 mb-1">Doris</h5>
-                            </a>
-                        </div>
-
-                        <div class="item">
-                            <a href="#" class="user-status-box">
-                                <div class="avatar-xs mx-auto d-block chat-user-img online">
-                                    <img src="{{ asset('chat-ui/images/users/avatar-5.jpg') }}" alt="user-img"
-                                        class="img-fluid rounded-circle" />
-                                    <span class="user-status"></span>
-                                </div>
-
-                                <h5 class="font-size-13 text-truncate mt-3 mb-1">Emily</h5>
-                            </a>
-                        </div>
-
-                        <div class="item">
-                            <a href="#" class="user-status-box">
-                                <div class="avatar-xs mx-auto d-block chat-user-img online">
-                                    <img src="{{ asset('chat-ui/images/users/avatar-6.jpg') }}" alt="user-img"
-                                        class="img-fluid rounded-circle" />
-                                    <span class="user-status"></span>
-                                </div>
-
-                                <h5 class="font-size-13 text-truncate mt-3 mb-1">Steve</h5>
-                            </a>
-                        </div>
-
-                        <div class="item">
-                            <a href="#" class="user-status-box">
-                                <div class="avatar-xs mx-auto d-block chat-user-img online">
-                                    <span class="avatar-title rounded-circle bg-soft-primary text-primary">
-                                        T
-                                    </span>
-                                    <span class="user-status"></span>
-                                </div>
-
-                                <h5 class="font-size-13 text-truncate mt-3 mb-1">Teresa</h5>
-                            </a>
-                        </div>
-                    </div>
+                    @livewire('recent-user-list')
                     <!-- end user status carousel -->
                 </div>
                 <!-- end user status -->
@@ -1406,8 +1346,7 @@
                         <div class="accordion-item card border mb-2">
                             <div class="accordion-header" id="personalinfo1">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#personalinfo" aria-expanded="true"
-                                    aria-controls="personalinfo">
+                                    data-bs-target="#personalinfo" aria-expanded="true" aria-controls="personalinfo">
                                     <h5 class="font-size-14 m-0">Personal Info</h5>
                                 </button>
                             </div>
@@ -1446,9 +1385,8 @@
 
                         <div class="accordion-item card border mb-2">
                             <div class="accordion-header" id="privacy1">
-                                <button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#privacy" aria-expanded="false"
-                                    aria-controls="privacy">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#privacy" aria-expanded="false" aria-controls="privacy">
                                     <h5 class="font-size-14 m-0">Privacy</h5>
                                 </button>
                             </div>
