@@ -28,7 +28,7 @@ class UserChatDetail extends Component
         });
         $this->updateMessageStatus($id);
         $this->emit('conversationSelected', $id);
-        $this->emit('connect', $this->conversation);
+        $this->emit('connection', $this->conversation);
         $this->dispatchBrowserEvent('show-chat-detail');
     }
 

@@ -25,8 +25,7 @@
 
                 <div class="text-center p-4 border-bottom">
                     <div class="mb-4">
-                        <img src="{{ asset('chat-ui/images/users/avatar-1.jpg') }}"
-                            class="rounded-circle avatar-lg img-thumbnail" />
+                        <img src="{{ auth()->user()->avatar_path }}" class="rounded-circle avatar-lg img-thumbnail" />
                     </div>
 
                     <h5 class="font-size-16 mb-1 text-truncate">{{ auth()->user()->name }}</h5>

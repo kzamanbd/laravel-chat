@@ -68,8 +68,7 @@ class Conversation extends Model
 
     public function getUserAvatarAttribute(): string
     {
-        $name = urlencode($this->getUserInfo()->name);
-        return "https://ui-avatars.com/api/?background=d5d3f8&color=7269ef&name=$name";
+        return $this->getUserInfo()->avatar_path;
     }
 
     /**

@@ -4,13 +4,13 @@
         <div class="side-menu flex-lg-column me-lg-1 ms-lg-0">
             <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="index.html" class="logo logo-dark">
+                <a href="{{ route('dashboard') }}" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="{{ asset('chat-ui/images/logo.svg') }}" height="30" />
                     </span>
                 </a>
 
-                <a href="index.html" class="logo logo-light">
+                <a href="{{ route('dashboard') }}" class="logo logo-light">
                     <span class="logo-sm">
                         <img src="{{ asset('chat-ui/images/logo.svg') }}" height="30" />
                     </span>
@@ -88,8 +88,7 @@
                     <li class="nav-item btn-group dropup profile-user-dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
-                            <img src="{{ asset('chat-ui/images/users/avatar-1.jpg') }}"
-                                class="profile-user rounded-circle" />
+                            <img src="{{ auth()->user()->avatar_path }}" class="profile-user rounded-circle" />
                         </a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="#">
@@ -99,9 +98,14 @@
                                 Setting <i class="ri-settings-3-line float-end text-muted"></i>
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="auth-login.html">
-                                Log out <i class="ri-logout-circle-r-line float-end text-muted"></i>
-                            </a>
+
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                    onclick="event.preventDefault();this.closest('form').submit();">
+                                    Log out <i class="ri-logout-circle-r-line float-end text-muted"></i>
+                                </a>
+                            </form>
                         </div>
                     </li>
                 </ul>
@@ -243,6 +247,7 @@
             </div>
         </div>
         <!-- end modal -->
+        <audio id="mySound" src="{{ asset('sounds/notification-1.mp3') }}"></audio>
     </div>
     <x-slot name="footer">
         <script>
@@ -266,7 +271,7 @@
                 element.scrollTo(0, element.scrollHeight);
             });
 
-            window.livewire.on('connect', (message) => {
+            window.livewire.on('connection', (message) => {
                 window.Echo.channel(`message.${message.id}`).on('message.created', (response) => {
                     console.log('connected', response);
                     window.livewire.emit('userConversationSelected', message.id);
@@ -284,6 +289,7 @@
                 window.Echo.channel('notify.message.{{ auth()->id() }}').on('message.created', (response) => {
                     console.log('nofity.message', response);
                     window.livewire.emit('refreshConversationList');
+                    document.getElementById('mySound').play();
                 });
             }
         </script>

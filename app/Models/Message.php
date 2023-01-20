@@ -49,6 +49,6 @@ class Message extends Model
     }
     public function getUserAvatarAttribute(): string
     {
-        return $this->user->user_avatar;
+        return $this->user->avatar_path;
     }
 }

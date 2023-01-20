@@ -15,7 +15,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $appends = ['user_avatar', 'is_online', 'last_active_at'];
+    protected $appends = ['avatar_path', 'is_online', 'last_active_at'];
     /**
      * The attributes that are mass assignable.
      *
@@ -46,7 +46,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function getUserAvatarAttribute(): string
+    public function getAvatarPathAttribute(): string
     {
         $name = urlencode($this->name);
         return "https://ui-avatars.com/api/?background=d5d3f8&color=7269ef&name=$name";
