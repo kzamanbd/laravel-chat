@@ -45,6 +45,6 @@ class MessageCreated implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'message.created';
+        return 'created';
     }
 }

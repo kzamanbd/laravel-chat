@@ -272,37 +272,38 @@
             });
 
             window.livewire.on('connection', (conversationId) => {
-                window.Echo.channel(`message.${conversationId}`).on('message.created', (response) => {
+                window.Echo.channel(`message.${conversationId}`).on('created', (response) => {
                     console.log('connected', response);
                     window.livewire.emit('userConversationSelected', conversationId);
                 });
-                window.Echo.channel(`lastSeenTime.${conversationId}`).on('message.seen', (response) => {
+                window.Echo.channel(`lastSeenTime.${conversationId}`).on('seen', (response) => {
                     console.log('lastSeenTime', response);
                     window.livewire.emit('userConversationSelected', conversationId);
                 });
             });
 
-            window.livewire.on('typing', (user, id) => {
-                console.log(id);
-                let channel = Echo.private('user-typing');
+            window.livewire.on('typing', (data) => {
+                console.log(data.id);
+                let channel = Echo.private(`user-typing.${data.target}`);
                 setTimeout(function() {
                     channel.whisper('typing', {
-                        id: id,
-                        user: user,
+                        id: data.id,
+                        user: data.user,
                         typing: true,
                     });
                 }, 300);
             });
 
             window.onload = function() {
-                window.Echo.private('user-typing').listenForWhisper('typing', (e) => {
+                const authId = {{ auth()->id() }};
+                window.Echo.private(`user-typing.${authId}`).listenForWhisper('typing', (e) => {
                     console.log(e)
                 });
-                window.Echo.channel('conversation.{{ auth()->id() }}').on('conversation.created', (response) => {
+                window.Echo.channel(`conversation.${authId}`).on('created', (response) => {
                     console.log('conversation.created', response);
                     window.livewire.emit('refreshConversationList');
                 });
-                window.Echo.channel('notify.message.{{ auth()->id() }}').on('message.created', (response) => {
+                window.Echo.channel(`notify.message.${authId}`).on('created', (response) => {
                     console.log('nofity.message', response);
                     window.livewire.emit('refreshConversationList');
                     document.getElementById('mySound').play();

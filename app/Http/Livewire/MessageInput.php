@@ -11,7 +11,7 @@ use App\Models\Conversation;
 
 class MessageInput extends Component
 {
-    public $conversation, $messageText;
+    public $conversation, $messageText, $targetUserId;
 
     protected $listeners = [
         'conversationSelected' => 'conversationSelected',
@@ -20,12 +20,19 @@ class MessageInput extends Component
     public function updatedMessageText()
     {
 
-        $this->emit('typing', auth()->user(), $this->conversation->id);
+        $this->emit('typing', [
+            'id' => $this->conversation->id,
+            'user' => auth()->user(),
+            'target' => $this->targetUserId
+        ]);
     }
 
     public function conversationSelected($conversationId)
     {
         $this->conversation = Conversation::find($conversationId);
+        $to_user_id = $this->conversation->to_user_id;
+        $from_user_id = $this->conversation->from_user_id;
+        $this->targetUserId = $to_user_id == auth()->id() ? $from_user_id : $to_user_id;
     }
     /**
      * @return void
@@ -46,12 +53,8 @@ class MessageInput extends Component
             'message' => $messageText
         ]);
 
-        $to_user_id = $this->conversation->to_user_id;
-        $from_user_id = $this->conversation->from_user_id;
-        $targetUserId = $to_user_id == auth()->id() ? $from_user_id : $to_user_id;
         $this->conversation->update(['updated_at' => now()]);
-
-        broadcast(new MessageCreated($message, $this->conversation->id, $targetUserId))->toOthers();
+        broadcast(new MessageCreated($message, $this->conversation->id, $this->targetUserId))->toOthers();
         $this->messageText = null;
 
         $this->emit('userConversationSelected', $this->conversation->id);

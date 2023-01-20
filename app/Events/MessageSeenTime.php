@@ -39,6 +39,6 @@ class MessageSeenTime implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'message.seen';
+        return 'seen';
     }
 }
