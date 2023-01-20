@@ -19,7 +19,8 @@ class MessageInput extends Component
 
     public function updatedMessageText()
     {
-        $this->emit('typing', auth()->user());
+
+        $this->emit('typing', auth()->user(), $this->conversation->id);
     }
 
     public function conversationSelected($conversationId)

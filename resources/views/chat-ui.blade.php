@@ -280,17 +280,24 @@
                     console.log('lastSeenTime', response);
                     window.livewire.emit('userConversationSelected', conversationId);
                 });
-
-                window.Echo.channel(`typing.${conversationId}`).listenForWhisper('typing', (e) => {
-                    console.log(e)
-                });
             });
 
-            window.livewire.on('typing', (conversationId) => {
-                console.log(conversationId);
+            window.livewire.on('typing', (user, id) => {
+                console.log(id);
+                let channel = Echo.private('user-typing');
+                setTimeout(function() {
+                    channel.whisper('typing', {
+                        id: id,
+                        user: user,
+                        typing: true,
+                    });
+                }, 300);
             });
 
             window.onload = function() {
+                window.Echo.private('user-typing').listenForWhisper('typing', (e) => {
+                    console.log(e)
+                });
                 window.Echo.channel('conversation.{{ auth()->id() }}').on('conversation.created', (response) => {
                     console.log('conversation.created', response);
                     window.livewire.emit('refreshConversationList');
