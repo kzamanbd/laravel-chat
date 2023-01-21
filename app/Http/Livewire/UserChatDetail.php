@@ -16,10 +16,10 @@ class UserChatDetail extends Component
     public $messages;
 
     protected $listeners = [
-        'userConversationSelected' => 'userConversationSelected',
+        'userConversationSelected' => 'getUserConversation',
     ];
 
-    public function userConversationSelected($id)
+    public function getUserConversation($id)
     {
         $this->conversation = Conversation::with(['from', 'to', 'messages'])->find($id);
 
