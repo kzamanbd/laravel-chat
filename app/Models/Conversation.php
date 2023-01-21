@@ -21,16 +21,8 @@ class Conversation extends Model
         'is_online',
         'latest_message',
         'latest_message_time',
-        'unread_message_count',
         'last_active_at'
     ];
-
-    // get user data
-    public function getUserData()
-    {
-        $userId = $this->to_user_id == auth()->id() ? 'from_user_id' : 'to_user_id';
-        return $this->hasOne(User::class, 'id', $userId);
-    }
 
     public function from(): HasOne
     {
@@ -91,12 +83,18 @@ class Conversation extends Model
         return Helpers::getLastActiveAt($key);
     }
 
+    public function getLastMessage()
+    {
+        return $this->messages->last();
+    }
+
     public function getLatestMessageAttribute(): string
     {
-        if ($this->messages->last()) {
+        $lastMessage = $this->getLastMessage();
+        if ($lastMessage) {
             // remove html tags
             $message = strip_tags($this->messages->last()->message);
-            if ($this->messages->last()->user_id == auth()->id()) {
+            if ($lastMessage->user_id == auth()->id()) {
                 return "You: $message";
             } else {
                 return $message;
@@ -107,8 +105,9 @@ class Conversation extends Model
 
     public function getLatestMessageTimeAttribute(): string
     {
-        if ($this->messages->last()) {
-            $createdAt = $this->messages->last()->created_at;
+        $lastMessage = $this->getLastMessage();
+        if ($lastMessage) {
+            $createdAt = $lastMessage->created_at;
             // get date week name
             $date = $createdAt->format('Y-m-d');
             $week = $createdAt->format('l');
@@ -125,10 +124,5 @@ class Conversation extends Model
             }
         }
         return '';
-    }
-
-    public function getUnreadMessageCountAttribute(): int
-    {
-        return $this->unreadMessage->count();
     }
 }

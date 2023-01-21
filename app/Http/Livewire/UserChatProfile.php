@@ -11,10 +11,10 @@ class UserChatProfile extends Component
     public $conversation;
 
     protected $listeners = [
-        'conversationSelected' => 'conversationSelected',
+        'conversationSelected' => 'getSelectedConversation',
     ];
 
-    public function conversationSelected(Conversation $conversation)
+    public function getSelectedConversation($conversation)
     {
         $this->conversation = $conversation;
     }

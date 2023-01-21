@@ -7,31 +7,29 @@ use Livewire\Component;
 use Illuminate\View\View;
 use App\Helpers\Helpers;
 use App\Events\MessageCreated;
-use App\Models\Conversation;
 
 class MessageInput extends Component
 {
     public $conversation, $messageText, $targetUserId;
 
     protected $listeners = [
-        'conversationSelected' => 'conversationSelected',
+        'conversationSelected' => 'getSelectedConversation',
     ];
 
     public function updatedMessageText()
     {
-
         $this->emit('typing', [
-            'id' => $this->conversation->id,
+            'id' => $this->conversation['id'],
             'user' => auth()->user(),
             'target' => $this->targetUserId
         ]);
     }
 
-    public function conversationSelected($conversationId)
+    public function getSelectedConversation($conversation)
     {
-        $this->conversation = Conversation::find($conversationId);
-        $to_user_id = $this->conversation->to_user_id;
-        $from_user_id = $this->conversation->from_user_id;
+        $this->conversation = $conversation;
+        $to_user_id = $conversation['to_user_id'];
+        $from_user_id = $conversation['from_user_id'];
         $this->targetUserId = $to_user_id == auth()->id() ? $from_user_id : $to_user_id;
     }
     /**
@@ -48,16 +46,16 @@ class MessageInput extends Component
         $messageText = preg_replace(Helpers::PHONE_REGEX, Helpers::PHONE_REPLACE, $messageText);
 
         $message = Message::create([
-            'conversation_id' => $this->conversation->id,
+            'conversation_id' => $this->conversation['id'],
             'user_id' => auth()->id(),
             'message' => $messageText
         ]);
 
         $this->conversation->update(['updated_at' => now()]);
-        broadcast(new MessageCreated($message, $this->conversation->id, $this->targetUserId))->toOthers();
+        broadcast(new MessageCreated($message, $this->conversation['id'], $this->targetUserId))->toOthers();
         $this->messageText = null;
 
-        $this->emit('userConversationSelected', $this->conversation->id);
+        $this->emit('userConversationSelected', $this->conversation['id']);
         $this->emit('refreshConversationList');
     }
     /**

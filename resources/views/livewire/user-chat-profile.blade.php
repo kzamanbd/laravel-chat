@@ -10,17 +10,17 @@
     @if ($conversation)
         <div class="text-center p-4 border-bottom">
             <div class="mb-4">
-                <img src="{{ $conversation->user_avatar }}" class="rounded-circle avatar-lg img-thumbnail" />
+                <img src="{{ $conversation['user_avatar'] }}" class="rounded-circle avatar-lg img-thumbnail" />
             </div>
 
             <h5 class="font-size-16 mb-1 text-truncate">
-                {{ $conversation->username }}
+                {{ $conversation['username'] }}
             </h5>
             <p class="text-muted text-truncate mb-1">
-                @if ($conversation->is_online)
+                @if ($conversation['is_online'])
                     <i class="ri-record-circle-fill font-size-10 text-success me-1 ms-0"></i> Active
                 @else
-                    {{ $conversation->last_active_at }}
+                    {{ $conversation['last_active_at'] }}
                 @endif
             </p>
         </div>
@@ -51,7 +51,7 @@
                         <div class="accordion-body">
                             <div>
                                 <p class="text-muted mb-1">Name</p>
-                                <h5 class="font-size-14">{{ $conversation->getUserData }}</h5>
+                                <h5 class="font-size-14">Zaman</h5>
                             </div>
 
                             <div class="mt-4">

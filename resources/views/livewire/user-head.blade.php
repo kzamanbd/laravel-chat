@@ -10,16 +10,16 @@
                     </a>
                 </div>
                 <div class="me-3 ms-0">
-                    @isset($conversation->user_avatar)
-                        <img src="{{ $conversation->user_avatar }}" class="rounded-circle avatar-xs" />
+                    @isset($conversation['user_avatar'])
+                        <img src="{{ $conversation['user_avatar'] }}" class="rounded-circle avatar-xs" />
                     @endisset
                 </div>
                 <div class="flex-grow-1 overflow-hidden">
                     <h5 class="font-size-16 mb-0 text-truncate">
                         <a href="#" class="text-reset user-profile-show">
-                            {{ $conversation->username ?? 'N/A' }}
+                            {{ $conversation['username'] ?? 'N/A' }}
                         </a>
-                        @isset($conversation->is_online)
+                        @isset($conversation['is_online'])
                             <i class="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i>
                         @endisset
                     </h5>
