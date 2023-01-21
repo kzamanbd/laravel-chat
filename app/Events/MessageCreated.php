@@ -16,18 +16,17 @@ class MessageCreated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public Message $message;
-    public $conversationId, $targetUserId;
+    public int $targetUserId;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Message $message, $conversationId, $targetUserId)
+    public function __construct(Message $message, int $targetUserId)
     {
         $this->message = $message;
         $this->targetUserId = $targetUserId;
-        $this->conversationId = $conversationId;
     }
 
     /**
@@ -38,7 +37,7 @@ class MessageCreated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel("message.$this->conversationId"),
+            new Channel("message.{$this->message->conversation_id}"),
             new Channel("notify.message.$this->targetUserId"),
         ];
     }

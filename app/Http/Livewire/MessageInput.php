@@ -7,6 +7,7 @@ use Livewire\Component;
 use Illuminate\View\View;
 use App\Helpers\Helpers;
 use App\Events\MessageCreated;
+use App\Models\Conversation;
 
 class MessageInput extends Component
 {
@@ -51,8 +52,8 @@ class MessageInput extends Component
             'message' => $messageText
         ]);
 
-        $this->conversation->update(['updated_at' => now()]);
-        broadcast(new MessageCreated($message, $this->conversation['id'], $this->targetUserId))->toOthers();
+        Conversation::find($this->conversation['id'])->update(['updated_at' => now()]);
+        broadcast(new MessageCreated($message, $this->targetUserId))->toOthers();
         $this->messageText = null;
 
         $this->emit('userConversationSelected', $this->conversation['id']);
