@@ -93,7 +93,7 @@ class Conversation extends Model
         $lastMessage = $this->getLastMessage();
         if ($lastMessage) {
             // remove html tags
-            $message = strip_tags($this->messages->last()->message);
+            $message = strip_tags($lastMessage->message);
             if ($lastMessage->user_id == auth()->id()) {
                 return "You: $message";
             } else {
