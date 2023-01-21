@@ -247,7 +247,7 @@
             </div>
         </div>
         <!-- end modal -->
-        <audio id="mySound" src="{{ asset('sounds/notification-1.mp3') }}"></audio>
+        <audio id="message-sound" src="{{ asset('sounds/notification-1.mp3') }}"></audio>
     </div>
     <x-slot name="footer">
         <script>
@@ -296,21 +296,21 @@
 
             window.onload = function() {
                 const authId = {{ auth()->id() }};
-                window.Echo.private(`user-typing.${authId}`).listenForWhisper('typing', (response) => {
+                Echo.private(`user-typing.${authId}`).listenForWhisper('typing', (response) => {
                     console.log(response)
-                    window.livewire.emit('showUserTyping', response);
+                    livewire.emit('showUserTyping', response);
                     setTimeout(function() {
-                        window.livewire.emit('hideUserTyping');
+                        livewire.emit('hideUserTyping');
                     }, 2000);
                 });
-                window.Echo.channel(`conversation.${authId}`).on('created', (response) => {
+                Echo.channel(`conversation.${authId}`).on('created', (response) => {
                     console.log('conversation.created', response);
-                    window.livewire.emit('refreshConversationList');
+                    livewire.emit('refreshConversationList');
                 });
-                window.Echo.channel(`notify.message.${authId}`).on('created', (response) => {
+                Echo.channel(`notify.message.${authId}`).on('created', (response) => {
                     console.log('nofity.message', response);
-                    window.livewire.emit('refreshConversationList');
-                    document.getElementById('mySound').play();
+                    livewire.emit('refreshConversationList');
+                    document.getElementById('message-sound').play();
                 });
             }
         </script>
