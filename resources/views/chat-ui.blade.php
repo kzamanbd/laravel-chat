@@ -272,11 +272,11 @@
             });
 
             window.livewire.on('connection', (conversationId) => {
-                window.Echo.channel(`message.${conversationId}`).on('created', (response) => {
+                Echo.join(`message.${conversationId}`).on('created', (response) => {
                     console.log('connected', response);
                     window.livewire.emit('userConversationSelected', conversationId);
                 });
-                window.Echo.channel(`lastSeenTime.${conversationId}`).on('seen', (response) => {
+                Echo.join(`lastSeenTime.${conversationId}`).on('seen', (response) => {
                     console.log('lastSeenTime', response);
                     window.livewire.emit('userConversationSelected', conversationId);
                 });
@@ -303,11 +303,11 @@
                         livewire.emit('hideUserTyping');
                     }, 2000);
                 });
-                Echo.channel(`conversation.${authId}`).on('created', (response) => {
+                Echo.join(`conversation.${authId}`).on('created', (response) => {
                     console.log('conversation.created', response);
                     livewire.emit('refreshConversationList');
                 });
-                Echo.channel(`notify.message.${authId}`).on('created', (response) => {
+                Echo.join(`notify.message.${authId}`).on('created', (response) => {
                     console.log('nofity.message', response);
                     livewire.emit('refreshConversationList');
                     document.getElementById('message-sound').play();
