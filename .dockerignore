@@ -1,0 +1,8 @@
+.git
+.dockerignore
+.github
+docker
+README.md
+node_modules
+npm-debug.log
+docker-compose.yml
