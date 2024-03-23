@@ -3,42 +3,44 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Livewire\Volt\Volt;
 
-class PasswordConfirmationTest extends TestCase
-{
-    use RefreshDatabase;
+test('confirm password screen can be rendered', function () {
+    $user = User::factory()->create();
 
-    public function test_confirm_password_screen_can_be_rendered()
-    {
-        $user = User::factory()->create();
+    $response = $this->actingAs($user)->get('/confirm-password');
 
-        $response = $this->actingAs($user)->get('/confirm-password');
+    $response
+        ->assertSeeVolt('pages.auth.confirm-password')
+        ->assertStatus(200);
+});
 
-        $response->assertStatus(200);
-    }
+test('password can be confirmed', function () {
+    $user = User::factory()->create();
 
-    public function test_password_can_be_confirmed()
-    {
-        $user = User::factory()->create();
+    $this->actingAs($user);
 
-        $response = $this->actingAs($user)->post('/confirm-password', [
-            'password' => 'password',
-        ]);
+    $component = Volt::test('pages.auth.confirm-password')
+        ->set('password', 'password');
 
-        $response->assertRedirect();
-        $response->assertSessionHasNoErrors();
-    }
+    $component->call('confirmPassword');
 
-    public function test_password_is_not_confirmed_with_invalid_password()
-    {
-        $user = User::factory()->create();
+    $component
+        ->assertRedirect('/dashboard')
+        ->assertHasNoErrors();
+});
 
-        $response = $this->actingAs($user)->post('/confirm-password', [
-            'password' => 'wrong-password',
-        ]);
+test('password is not confirmed with invalid password', function () {
+    $user = User::factory()->create();
 
-        $response->assertSessionHasErrors();
-    }
-}
+    $this->actingAs($user);
+
+    $component = Volt::test('pages.auth.confirm-password')
+        ->set('password', 'wrong-password');
+
+    $component->call('confirmPassword');
+
+    $component
+        ->assertNoRedirect()
+        ->assertHasErrors('password');
+});

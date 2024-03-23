@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
-use App\Helpers\Helpers;
-use Carbon\Carbon;
+use App\Http\Helpers\Helpers;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Psr\SimpleCache\InvalidArgumentException;
 
 class Conversation extends Model
 {
     use HasFactory;
-
     protected $guarded = [];
     protected $appends = [
         'username',
@@ -63,9 +60,6 @@ class Conversation extends Model
         return $this->getUserInfo()->avatar_path;
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function getIsOnlineAttribute(): bool
     {
         $key = $this->to_user_id == auth()->id()
