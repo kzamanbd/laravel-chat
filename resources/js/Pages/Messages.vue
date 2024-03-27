@@ -1,7 +1,7 @@
 <script setup lang="ts">
-    import { Head } from '@inertiajs/vue3';
+    import { Head, Link } from '@inertiajs/vue3';
+    import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
     import { reactive, ref, computed } from 'vue';
-    // @ts-ignore
     import ChatLayout from '@/Layouts/ChatLayout.vue';
     import { Contact } from '@/types';
     import contacts from '@/contactList.json';
@@ -9,13 +9,7 @@
     const contactList: Contact[] = reactive(contacts.data) as any;
 
     // @ts-ignore
-    let selectedUser: Contact = reactive({
-        userId: 0,
-        name: '',
-        path: '',
-        time: '',
-        preview: ''
-    });
+    const selectedUser = ref<Contact>({});
 
     const chat = ref({
         chatMenu: false,
@@ -33,7 +27,7 @@
 
     const searchUsers = computed(() => {
         setTimeout(() => {
-            const element = document.querySelector('.chat-users');
+            const element = document.querySelector('.chat-users') as HTMLElement;
             if (element) {
                 element.scrollTop = 0;
                 // @ts-ignore
@@ -47,7 +41,7 @@
 
     function selectUser(user: Contact) {
         console.log(user);
-        selectedUser = user;
+        selectedUser.value = user;
         chat.value.chatUser = true;
         scrollToBottom();
         chat.value.chatMenu = false;
@@ -56,25 +50,25 @@
     function sendMessage() {
         if (chat.value.textMessage.trim()) {
             const user: Contact | undefined = contactList.find(
-                (d: any) => d.userId === selectedUser.userId
+                (d: any) => d.userId === selectedUser.value.userId
             );
             if (user) {
                 user.messages.push({
-                    fromUserId: selectedUser.userId,
+                    fromUserId: selectedUser.value.userId,
                     toUserId: 0,
                     text: chat.value.textMessage,
                     time: 'Just now'
                 });
                 chat.value.textMessage = '';
             }
-            // chat.scrollToBottom;
+            scrollToBottom();
         }
     }
 
     function scrollToBottom() {
         if (chat.value.chatUser) {
             setTimeout(() => {
-                const element = document.querySelector('.chat-conversation-box');
+                const element = document.querySelector('.chat-conversation-box') as HTMLElement;
                 element?.scrollIntoView({
                     behavior: 'smooth',
                     block: 'end'
@@ -104,10 +98,9 @@
                             <p class="text-white-dark text-xs">Software Developer</p>
                         </div>
                     </div>
-                    <div class="dropdown">
-                        <button
-                            type="button"
-                            class="dropdown-toggle h-8 w-8 items-center justify-center rounded-full bg-[#f4f4f4] hover:bg-primary-100 dark:bg-[#1b2e4b]">
+
+                    <Menu as="div" class="dropdown">
+                        <MenuButton>
                             <svg
                                 width="24"
                                 height="24"
@@ -135,86 +128,120 @@
                                     stroke="currentColor"
                                     stroke-width="1.5"></circle>
                             </svg>
-                        </button>
-
-                        <ul class="dropdown-menu right-0 w-48 whitespace-nowrap">
-                            <li>
-                                <a href="javascript:;" class="dropdown-link">
-                                    <svg
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="h-4.5 w-4.5 mr-1 shrink-0">
-                                        <circle
-                                            cx="12"
-                                            cy="12"
-                                            r="3"
-                                            stroke="currentColor"
-                                            stroke-width="1.5"></circle>
-                                        <path
-                                            opacity="0.5"
-                                            d="M13.7654 2.15224C13.3978 2 12.9319 2 12 2C11.0681 2 10.6022 2 10.2346 2.15224C9.74457 2.35523 9.35522 2.74458 9.15223 3.23463C9.05957 3.45834 9.0233 3.7185 9.00911 4.09799C8.98826 4.65568 8.70226 5.17189 8.21894 5.45093C7.73564 5.72996 7.14559 5.71954 6.65219 5.45876C6.31645 5.2813 6.07301 5.18262 5.83294 5.15102C5.30704 5.08178 4.77518 5.22429 4.35436 5.5472C4.03874 5.78938 3.80577 6.1929 3.33983 6.99993C2.87389 7.80697 2.64092 8.21048 2.58899 8.60491C2.51976 9.1308 2.66227 9.66266 2.98518 10.0835C3.13256 10.2756 3.3397 10.437 3.66119 10.639C4.1338 10.936 4.43789 11.4419 4.43786 12C4.43783 12.5581 4.13375 13.0639 3.66118 13.3608C3.33965 13.5629 3.13248 13.7244 2.98508 13.9165C2.66217 14.3373 2.51966 14.8691 2.5889 15.395C2.64082 15.7894 2.87379 16.193 3.33973 17C3.80568 17.807 4.03865 18.2106 4.35426 18.4527C4.77508 18.7756 5.30694 18.9181 5.83284 18.8489C6.07289 18.8173 6.31632 18.7186 6.65204 18.5412C7.14547 18.2804 7.73556 18.27 8.2189 18.549C8.70224 18.8281 8.98826 19.3443 9.00911 19.9021C9.02331 20.2815 9.05957 20.5417 9.15223 20.7654C9.35522 21.2554 9.74457 21.6448 10.2346 21.8478C10.6022 22 11.0681 22 12 22C12.9319 22 13.3978 22 13.7654 21.8478C14.2554 21.6448 14.6448 21.2554 14.8477 20.7654C14.9404 20.5417 14.9767 20.2815 14.9909 19.902C15.0117 19.3443 15.2977 18.8281 15.781 18.549C16.2643 18.2699 16.8544 18.2804 17.3479 18.5412C17.6836 18.7186 17.927 18.8172 18.167 18.8488C18.6929 18.9181 19.2248 18.7756 19.6456 18.4527C19.9612 18.2105 20.1942 17.807 20.6601 16.9999C21.1261 16.1929 21.3591 15.7894 21.411 15.395C21.4802 14.8691 21.3377 14.3372 21.0148 13.9164C20.8674 13.7243 20.6602 13.5628 20.3387 13.3608C19.8662 13.0639 19.5621 12.558 19.5621 11.9999C19.5621 11.4418 19.8662 10.9361 20.3387 10.6392C20.6603 10.4371 20.8675 10.2757 21.0149 10.0835C21.3378 9.66273 21.4803 9.13087 21.4111 8.60497C21.3592 8.21055 21.1262 7.80703 20.6602 7C20.1943 6.19297 19.9613 5.78945 19.6457 5.54727C19.2249 5.22436 18.693 5.08185 18.1671 5.15109C17.9271 5.18269 17.6837 5.28136 17.3479 5.4588C16.8545 5.71959 16.2644 5.73002 15.7811 5.45096C15.2977 5.17191 15.0117 4.65566 14.9909 4.09794C14.9767 3.71848 14.9404 3.45833 14.8477 3.23463C14.6448 2.74458 14.2554 2.35523 13.7654 2.15224Z"
-                                            stroke="currentColor"
-                                            stroke-width="1.5"></path>
-                                    </svg>
-                                    Settings
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:;" class="dropdown-link">
-                                    <svg
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="h-4.5 w-4.5 mr-1 shrink-0">
-                                        <circle
-                                            opacity="0.5"
-                                            cx="12"
-                                            cy="12"
-                                            r="10"
-                                            stroke="currentColor"
-                                            stroke-width="1.5"></circle>
-                                        <path
-                                            d="M10.125 8.875C10.125 7.83947 10.9645 7 12 7C13.0355 7 13.875 7.83947 13.875 8.875C13.875 9.56245 13.505 10.1635 12.9534 10.4899C12.478 10.7711 12 11.1977 12 11.75V13"
-                                            stroke="currentColor"
-                                            stroke-width="1.5"
-                                            stroke-linecap="round"></path>
-                                        <circle cx="12" cy="16" r="1" fill="currentColor"></circle>
-                                    </svg>
-                                    Help &amp; feedback
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:;" class="dropdown-link">
-                                    <svg
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="h-4.5 w-4.5 mr-1 shrink-0">
-                                        <path
-                                            d="M2.00098 11.999L16.001 11.999M16.001 11.999L12.501 8.99902M16.001 11.999L12.501 14.999"
-                                            stroke="currentColor"
-                                            stroke-width="1.5"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"></path>
-                                        <path
-                                            opacity="0.5"
-                                            d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2L16.0002 2C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8L22.0002 16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17"
-                                            stroke="currentColor"
-                                            stroke-width="1.5"
-                                            stroke-linecap="round"></path>
-                                    </svg>
-                                    Sign Out
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                        </MenuButton>
+                        <MenuItems>
+                            <ul class="dropdown-menu right-0 w-48 whitespace-nowrap block">
+                                <li>
+                                    <Link :href="route('profile.edit')" class="dropdown-link">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-4.5 w-4.5 mr-1 shrink-0">
+                                            <circle
+                                                cx="10"
+                                                cy="6"
+                                                r="4"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"></circle>
+                                            <path
+                                                opacity="0.5"
+                                                d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"></path>
+                                            <path
+                                                d="M21 10H19M19 10H17M19 10L19 8M19 10L19 12"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"
+                                                stroke-linecap="round"></path>
+                                        </svg>
+                                        Profile
+                                    </Link>
+                                </li>
+                                <li>
+                                    <a href="javascript:;" class="dropdown-link">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-4.5 w-4.5 mr-1 shrink-0">
+                                            <circle
+                                                cx="12"
+                                                cy="12"
+                                                r="3"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"></circle>
+                                            <path
+                                                opacity="0.5"
+                                                d="M13.7654 2.15224C13.3978 2 12.9319 2 12 2C11.0681 2 10.6022 2 10.2346 2.15224C9.74457 2.35523 9.35522 2.74458 9.15223 3.23463C9.05957 3.45834 9.0233 3.7185 9.00911 4.09799C8.98826 4.65568 8.70226 5.17189 8.21894 5.45093C7.73564 5.72996 7.14559 5.71954 6.65219 5.45876C6.31645 5.2813 6.07301 5.18262 5.83294 5.15102C5.30704 5.08178 4.77518 5.22429 4.35436 5.5472C4.03874 5.78938 3.80577 6.1929 3.33983 6.99993C2.87389 7.80697 2.64092 8.21048 2.58899 8.60491C2.51976 9.1308 2.66227 9.66266 2.98518 10.0835C3.13256 10.2756 3.3397 10.437 3.66119 10.639C4.1338 10.936 4.43789 11.4419 4.43786 12C4.43783 12.5581 4.13375 13.0639 3.66118 13.3608C3.33965 13.5629 3.13248 13.7244 2.98508 13.9165C2.66217 14.3373 2.51966 14.8691 2.5889 15.395C2.64082 15.7894 2.87379 16.193 3.33973 17C3.80568 17.807 4.03865 18.2106 4.35426 18.4527C4.77508 18.7756 5.30694 18.9181 5.83284 18.8489C6.07289 18.8173 6.31632 18.7186 6.65204 18.5412C7.14547 18.2804 7.73556 18.27 8.2189 18.549C8.70224 18.8281 8.98826 19.3443 9.00911 19.9021C9.02331 20.2815 9.05957 20.5417 9.15223 20.7654C9.35522 21.2554 9.74457 21.6448 10.2346 21.8478C10.6022 22 11.0681 22 12 22C12.9319 22 13.3978 22 13.7654 21.8478C14.2554 21.6448 14.6448 21.2554 14.8477 20.7654C14.9404 20.5417 14.9767 20.2815 14.9909 19.902C15.0117 19.3443 15.2977 18.8281 15.781 18.549C16.2643 18.2699 16.8544 18.2804 17.3479 18.5412C17.6836 18.7186 17.927 18.8172 18.167 18.8488C18.6929 18.9181 19.2248 18.7756 19.6456 18.4527C19.9612 18.2105 20.1942 17.807 20.6601 16.9999C21.1261 16.1929 21.3591 15.7894 21.411 15.395C21.4802 14.8691 21.3377 14.3372 21.0148 13.9164C20.8674 13.7243 20.6602 13.5628 20.3387 13.3608C19.8662 13.0639 19.5621 12.558 19.5621 11.9999C19.5621 11.4418 19.8662 10.9361 20.3387 10.6392C20.6603 10.4371 20.8675 10.2757 21.0149 10.0835C21.3378 9.66273 21.4803 9.13087 21.4111 8.60497C21.3592 8.21055 21.1262 7.80703 20.6602 7C20.1943 6.19297 19.9613 5.78945 19.6457 5.54727C19.2249 5.22436 18.693 5.08185 18.1671 5.15109C17.9271 5.18269 17.6837 5.28136 17.3479 5.4588C16.8545 5.71959 16.2644 5.73002 15.7811 5.45096C15.2977 5.17191 15.0117 4.65566 14.9909 4.09794C14.9767 3.71848 14.9404 3.45833 14.8477 3.23463C14.6448 2.74458 14.2554 2.35523 13.7654 2.15224Z"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"></path>
+                                        </svg>
+                                        Settings
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;" class="dropdown-link">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-4.5 w-4.5 mr-1 shrink-0">
+                                            <circle
+                                                opacity="0.5"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"></circle>
+                                            <path
+                                                d="M10.125 8.875C10.125 7.83947 10.9645 7 12 7C13.0355 7 13.875 7.83947 13.875 8.875C13.875 9.56245 13.505 10.1635 12.9534 10.4899C12.478 10.7711 12 11.1977 12 11.75V13"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"
+                                                stroke-linecap="round"></path>
+                                            <circle
+                                                cx="12"
+                                                cy="16"
+                                                r="1"
+                                                fill="currentColor"></circle>
+                                        </svg>
+                                        Help &amp; feedback
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;" class="dropdown-link">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-4.5 w-4.5 mr-1 shrink-0">
+                                            <path
+                                                d="M2.00098 11.999L16.001 11.999M16.001 11.999L12.501 8.99902M16.001 11.999L12.501 14.999"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path
+                                                opacity="0.5"
+                                                d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2L16.0002 2C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8L22.0002 16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"
+                                                stroke-linecap="round"></path>
+                                        </svg>
+                                        Sign Out
+                                    </a>
+                                </li>
+                            </ul>
+                        </MenuItems>
+                    </Menu>
                 </div>
                 <div class="relative">
                     <input
@@ -664,10 +691,8 @@
                                     </svg>
                                 </button>
 
-                                <div class="dropdown">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle flex h-8 w-8 items-center justify-center rounded-full bg-[#f4f4f4] hover:bg-primary-100 hover:text-primary dark:bg-[#1b2e4b]">
+                                <Menu as="div" class="dropdown">
+                                    <MenuButton>
                                         <svg
                                             width="24"
                                             height="24"
@@ -695,164 +720,166 @@
                                                 stroke="currentColor"
                                                 stroke-width="1.5"></circle>
                                         </svg>
-                                    </button>
-                                    <ul class="dropdown-menu right-0">
-                                        <li>
-                                            <a href="javascript:;" class="dropdown-link">
-                                                <svg
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    class="mr-2 h-4 w-4">
-                                                    <circle
-                                                        cx="11.5"
-                                                        cy="11.5"
-                                                        r="9.5"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"
-                                                        opacity="0.5"></circle>
-                                                    <path
-                                                        d="M18.5 18.5L22 22"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"
-                                                        stroke-linecap="round"></path>
-                                                </svg>
-                                                Search
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;" class="dropdown-link">
-                                                <svg
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    class="h-4.5 w-4.5 mr-2">
-                                                    <path
-                                                        d="M6 11C6 8.17157 6 6.75736 6.87868 5.87868C7.75736 5 9.17157 5 12 5H15C17.8284 5 19.2426 5 20.1213 5.87868C21 6.75736 21 8.17157 21 11V16C21 18.8284 21 20.2426 20.1213 21.1213C19.2426 22 17.8284 22 15 22H12C9.17157 22 7.75736 22 6.87868 21.1213C6 20.2426 6 18.8284 6 16V11Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"></path>
-                                                    <path
-                                                        opacity="0.5"
-                                                        d="M6 19C4.34315 19 3 17.6569 3 16V10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H15C16.6569 2 18 3.34315 18 5"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"></path>
-                                                </svg>
-                                                Copy
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;" class="dropdown-link">
-                                                <svg
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    class="h-4.5 w-4.5 mr-2">
-                                                    <path
-                                                        opacity="0.5"
-                                                        d="M9.17065 4C9.58249 2.83481 10.6937 2 11.9999 2C13.3062 2 14.4174 2.83481 14.8292 4"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"
-                                                        stroke-linecap="round"></path>
-                                                    <path
-                                                        d="M20.5001 6H3.5"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"
-                                                        stroke-linecap="round"></path>
-                                                    <path
-                                                        d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"
-                                                        stroke-linecap="round"></path>
-                                                    <path
-                                                        opacity="0.5"
-                                                        d="M9.5 11L10 16"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"
-                                                        stroke-linecap="round"></path>
-                                                    <path
-                                                        opacity="0.5"
-                                                        d="M14.5 11L14 16"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"
-                                                        stroke-linecap="round"></path>
-                                                </svg>
-                                                Delete
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;" class="dropdown-link">
-                                                <svg
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    class="h-4.5 w-4.5 mr-2">
-                                                    <path
-                                                        d="M9 11.5C9 12.8807 7.88071 14 6.5 14C5.11929 14 4 12.8807 4 11.5C4 10.1193 5.11929 9 6.5 9C7.88071 9 9 10.1193 9 11.5Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"></path>
-                                                    <path
-                                                        opacity="0.5"
-                                                        d="M14.3206 16.8017L9 13.29"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"
-                                                        stroke-linecap="round"></path>
-                                                    <path
-                                                        opacity="0.5"
-                                                        d="M14.4207 6.83984L9.1001 10.3515"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"
-                                                        stroke-linecap="round"></path>
-                                                    <path
-                                                        d="M19 18.5C19 19.8807 17.8807 21 16.5 21C15.1193 21 14 19.8807 14 18.5C14 17.1193 15.1193 16 16.5 16C17.8807 16 19 17.1193 19 18.5Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"></path>
-                                                    <path
-                                                        d="M19 5.5C19 6.88071 17.8807 8 16.5 8C15.1193 8 14 6.88071 14 5.5C14 4.11929 15.1193 3 16.5 3C17.8807 3 19 4.11929 19 5.5Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"></path>
-                                                </svg>
-                                                Share
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;" class="dropdown-link">
-                                                <svg
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    class="h-4.5 w-4.5 mr-2">
-                                                    <circle
-                                                        cx="12"
-                                                        cy="12"
-                                                        r="3"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"></circle>
-                                                    <path
-                                                        opacity="0.5"
-                                                        d="M13.7654 2.15224C13.3978 2 12.9319 2 12 2C11.0681 2 10.6022 2 10.2346 2.15224C9.74457 2.35523 9.35522 2.74458 9.15223 3.23463C9.05957 3.45834 9.0233 3.7185 9.00911 4.09799C8.98826 4.65568 8.70226 5.17189 8.21894 5.45093C7.73564 5.72996 7.14559 5.71954 6.65219 5.45876C6.31645 5.2813 6.07301 5.18262 5.83294 5.15102C5.30704 5.08178 4.77518 5.22429 4.35436 5.5472C4.03874 5.78938 3.80577 6.1929 3.33983 6.99993C2.87389 7.80697 2.64092 8.21048 2.58899 8.60491C2.51976 9.1308 2.66227 9.66266 2.98518 10.0835C3.13256 10.2756 3.3397 10.437 3.66119 10.639C4.1338 10.936 4.43789 11.4419 4.43786 12C4.43783 12.5581 4.13375 13.0639 3.66118 13.3608C3.33965 13.5629 3.13248 13.7244 2.98508 13.9165C2.66217 14.3373 2.51966 14.8691 2.5889 15.395C2.64082 15.7894 2.87379 16.193 3.33973 17C3.80568 17.807 4.03865 18.2106 4.35426 18.4527C4.77508 18.7756 5.30694 18.9181 5.83284 18.8489C6.07289 18.8173 6.31632 18.7186 6.65204 18.5412C7.14547 18.2804 7.73556 18.27 8.2189 18.549C8.70224 18.8281 8.98826 19.3443 9.00911 19.9021C9.02331 20.2815 9.05957 20.5417 9.15223 20.7654C9.35522 21.2554 9.74457 21.6448 10.2346 21.8478C10.6022 22 11.0681 22 12 22C12.9319 22 13.3978 22 13.7654 21.8478C14.2554 21.6448 14.6448 21.2554 14.8477 20.7654C14.9404 20.5417 14.9767 20.2815 14.9909 19.902C15.0117 19.3443 15.2977 18.8281 15.781 18.549C16.2643 18.2699 16.8544 18.2804 17.3479 18.5412C17.6836 18.7186 17.927 18.8172 18.167 18.8488C18.6929 18.9181 19.2248 18.7756 19.6456 18.4527C19.9612 18.2105 20.1942 17.807 20.6601 16.9999C21.1261 16.1929 21.3591 15.7894 21.411 15.395C21.4802 14.8691 21.3377 14.3372 21.0148 13.9164C20.8674 13.7243 20.6602 13.5628 20.3387 13.3608C19.8662 13.0639 19.5621 12.558 19.5621 11.9999C19.5621 11.4418 19.8662 10.9361 20.3387 10.6392C20.6603 10.4371 20.8675 10.2757 21.0149 10.0835C21.3378 9.66273 21.4803 9.13087 21.4111 8.60497C21.3592 8.21055 21.1262 7.80703 20.6602 7C20.1943 6.19297 19.9613 5.78945 19.6457 5.54727C19.2249 5.22436 18.693 5.08185 18.1671 5.15109C17.9271 5.18269 17.6837 5.28136 17.3479 5.4588C16.8545 5.71959 16.2644 5.73002 15.7811 5.45096C15.2977 5.17191 15.0117 4.65566 14.9909 4.09794C14.9767 3.71848 14.9404 3.45833 14.8477 3.23463C14.6448 2.74458 14.2554 2.35523 13.7654 2.15224Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.5"></path>
-                                                </svg>
-                                                Settings
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                    </MenuButton>
+                                    <MenuItems>
+                                        <ul class="dropdown-menu right-0 block">
+                                            <li>
+                                                <a href="javascript:;" class="dropdown-link">
+                                                    <svg
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        class="mr-2 h-4 w-4">
+                                                        <circle
+                                                            cx="11.5"
+                                                            cy="11.5"
+                                                            r="9.5"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            opacity="0.5"></circle>
+                                                        <path
+                                                            d="M18.5 18.5L22 22"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"></path>
+                                                    </svg>
+                                                    Search
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;" class="dropdown-link">
+                                                    <svg
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-4.5 w-4.5 mr-2">
+                                                        <path
+                                                            d="M6 11C6 8.17157 6 6.75736 6.87868 5.87868C7.75736 5 9.17157 5 12 5H15C17.8284 5 19.2426 5 20.1213 5.87868C21 6.75736 21 8.17157 21 11V16C21 18.8284 21 20.2426 20.1213 21.1213C19.2426 22 17.8284 22 15 22H12C9.17157 22 7.75736 22 6.87868 21.1213C6 20.2426 6 18.8284 6 16V11Z"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"></path>
+                                                        <path
+                                                            opacity="0.5"
+                                                            d="M6 19C4.34315 19 3 17.6569 3 16V10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H15C16.6569 2 18 3.34315 18 5"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"></path>
+                                                    </svg>
+                                                    Copy
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;" class="dropdown-link">
+                                                    <svg
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-4.5 w-4.5 mr-2">
+                                                        <path
+                                                            opacity="0.5"
+                                                            d="M9.17065 4C9.58249 2.83481 10.6937 2 11.9999 2C13.3062 2 14.4174 2.83481 14.8292 4"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"></path>
+                                                        <path
+                                                            d="M20.5001 6H3.5"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"></path>
+                                                        <path
+                                                            d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"></path>
+                                                        <path
+                                                            opacity="0.5"
+                                                            d="M9.5 11L10 16"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"></path>
+                                                        <path
+                                                            opacity="0.5"
+                                                            d="M14.5 11L14 16"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"></path>
+                                                    </svg>
+                                                    Delete
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;" class="dropdown-link">
+                                                    <svg
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-4.5 w-4.5 mr-2">
+                                                        <path
+                                                            d="M9 11.5C9 12.8807 7.88071 14 6.5 14C5.11929 14 4 12.8807 4 11.5C4 10.1193 5.11929 9 6.5 9C7.88071 9 9 10.1193 9 11.5Z"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"></path>
+                                                        <path
+                                                            opacity="0.5"
+                                                            d="M14.3206 16.8017L9 13.29"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"></path>
+                                                        <path
+                                                            opacity="0.5"
+                                                            d="M14.4207 6.83984L9.1001 10.3515"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"></path>
+                                                        <path
+                                                            d="M19 18.5C19 19.8807 17.8807 21 16.5 21C15.1193 21 14 19.8807 14 18.5C14 17.1193 15.1193 16 16.5 16C17.8807 16 19 17.1193 19 18.5Z"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"></path>
+                                                        <path
+                                                            d="M19 5.5C19 6.88071 17.8807 8 16.5 8C15.1193 8 14 6.88071 14 5.5C14 4.11929 15.1193 3 16.5 3C17.8807 3 19 4.11929 19 5.5Z"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"></path>
+                                                    </svg>
+                                                    Share
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;" class="dropdown-link">
+                                                    <svg
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-4.5 w-4.5 mr-2">
+                                                        <circle
+                                                            cx="12"
+                                                            cy="12"
+                                                            r="3"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"></circle>
+                                                        <path
+                                                            opacity="0.5"
+                                                            d="M13.7654 2.15224C13.3978 2 12.9319 2 12 2C11.0681 2 10.6022 2 10.2346 2.15224C9.74457 2.35523 9.35522 2.74458 9.15223 3.23463C9.05957 3.45834 9.0233 3.7185 9.00911 4.09799C8.98826 4.65568 8.70226 5.17189 8.21894 5.45093C7.73564 5.72996 7.14559 5.71954 6.65219 5.45876C6.31645 5.2813 6.07301 5.18262 5.83294 5.15102C5.30704 5.08178 4.77518 5.22429 4.35436 5.5472C4.03874 5.78938 3.80577 6.1929 3.33983 6.99993C2.87389 7.80697 2.64092 8.21048 2.58899 8.60491C2.51976 9.1308 2.66227 9.66266 2.98518 10.0835C3.13256 10.2756 3.3397 10.437 3.66119 10.639C4.1338 10.936 4.43789 11.4419 4.43786 12C4.43783 12.5581 4.13375 13.0639 3.66118 13.3608C3.33965 13.5629 3.13248 13.7244 2.98508 13.9165C2.66217 14.3373 2.51966 14.8691 2.5889 15.395C2.64082 15.7894 2.87379 16.193 3.33973 17C3.80568 17.807 4.03865 18.2106 4.35426 18.4527C4.77508 18.7756 5.30694 18.9181 5.83284 18.8489C6.07289 18.8173 6.31632 18.7186 6.65204 18.5412C7.14547 18.2804 7.73556 18.27 8.2189 18.549C8.70224 18.8281 8.98826 19.3443 9.00911 19.9021C9.02331 20.2815 9.05957 20.5417 9.15223 20.7654C9.35522 21.2554 9.74457 21.6448 10.2346 21.8478C10.6022 22 11.0681 22 12 22C12.9319 22 13.3978 22 13.7654 21.8478C14.2554 21.6448 14.6448 21.2554 14.8477 20.7654C14.9404 20.5417 14.9767 20.2815 14.9909 19.902C15.0117 19.3443 15.2977 18.8281 15.781 18.549C16.2643 18.2699 16.8544 18.2804 17.3479 18.5412C17.6836 18.7186 17.927 18.8172 18.167 18.8488C18.6929 18.9181 19.2248 18.7756 19.6456 18.4527C19.9612 18.2105 20.1942 17.807 20.6601 16.9999C21.1261 16.1929 21.3591 15.7894 21.411 15.395C21.4802 14.8691 21.3377 14.3372 21.0148 13.9164C20.8674 13.7243 20.6602 13.5628 20.3387 13.3608C19.8662 13.0639 19.5621 12.558 19.5621 11.9999C19.5621 11.4418 19.8662 10.9361 20.3387 10.6392C20.6603 10.4371 20.8675 10.2757 21.0149 10.0835C21.3378 9.66273 21.4803 9.13087 21.4111 8.60497C21.3592 8.21055 21.1262 7.80703 20.6602 7C20.1943 6.19297 19.9613 5.78945 19.6457 5.54727C19.2249 5.22436 18.693 5.08185 18.1671 5.15109C17.9271 5.18269 17.6837 5.28136 17.3479 5.4588C16.8545 5.71959 16.2644 5.73002 15.7811 5.45096C15.2977 5.17191 15.0117 4.65566 14.9909 4.09794C14.9767 3.71848 14.9404 3.45833 14.8477 3.23463C14.6448 2.74458 14.2554 2.35523 13.7654 2.15224Z"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"></path>
+                                                    </svg>
+                                                    Settings
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </MenuItems>
+                                </Menu>
                             </div>
                         </div>
                         <div
                             class="h-px w-full border-b border-[#e0e6ed] dark:border-[#1b2e4b]"></div>
-                        <div
+                        <Simplebar
                             data-simplebar
                             class="relative h-full overflow-auto sm:h-[calc(100vh_-_340px)]">
                             <div class="chat-conversation-box">
@@ -952,7 +979,7 @@
                                     </div>
                                 </template>
                             </div>
-                        </div>
+                        </Simplebar>
                         <div class="absolute bottom-0 left-0 w-full p-4">
                             <div class="w-full items-center space-x-3 sm:flex">
                                 <div class="relative flex-1">
