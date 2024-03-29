@@ -13,7 +13,7 @@ class Message extends Model
     protected $guarded = [];
     protected $appends = [
         'username',
-        'user_avatar',
+        'avatar_path',
         'last_seen_time'
     ];
 
@@ -47,7 +47,7 @@ class Message extends Model
     {
         return $this->user->name;
     }
-    public function getUserAvatarAttribute(): string
+    public function getAvatarPathAttribute(): string
     {
         return $this->user->avatar_path;
     }

@@ -13,7 +13,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $appends = ['avatar_path', 'is_online', 'last_active_at'];
+    protected $appends = ['avatar_path', 'is_active', 'last_active_at'];
 
     /**
      * The attributes that are mass assignable.
@@ -55,9 +55,9 @@ class User extends Authenticatable
         return "https://ui-avatars.com/api/?background=d5d3f8&color=7269ef&name=$name";
     }
 
-    public function getIsOnlineAttribute(): bool
+    public function getIsActiveAttribute(): bool
     {
-        return cache()->has("is_online$this->id");
+        return cache()->has("is_active$this->id");
     }
 
     public function getLastActiveAtAttribute()

@@ -14,8 +14,8 @@ class Conversation extends Model
     protected $guarded = [];
     protected $appends = [
         'username',
-        'user_avatar',
-        'is_online',
+        'avatar_path',
+        'is_active',
         'latest_message',
         'latest_message_time',
         'last_active_at'
@@ -55,18 +55,18 @@ class Conversation extends Model
         return $this->getUserInfo()->name;
     }
 
-    public function getUserAvatarAttribute(): string
+    public function getAvatarPathAttribute(): string
     {
         return $this->getUserInfo()->avatar_path;
     }
 
-    public function getIsOnlineAttribute(): bool
+    public function getIsActiveAttribute(): bool
     {
         $key = $this->to_user_id == auth()->id()
             ? $this->from_user_id
             : $this->to_user_id;
 
-        return cache()->has("is_online$key");
+        return cache()->has("is_active$key");
     }
 
     public function getLastActiveAtAttribute()
@@ -117,6 +117,6 @@ class Conversation extends Model
                 return $createdAt->format('d M Y');
             }
         }
-        return '';
+        return 'N/A';
     }
 }
