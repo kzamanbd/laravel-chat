@@ -18,6 +18,7 @@ class ConversationFactory extends Factory
     public function definition(): array
     {
         return [
+            'uuid' => $this->faker->uuid,
             'from_user_id' => User::all()->random()->id,
             'to_user_id' => User::all()->random()->id,
         ];

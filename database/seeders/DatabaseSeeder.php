@@ -17,10 +17,15 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        try {
+            User::factory()->create([
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+            ]);
+        } catch (\Exception $e) {
+            // do nothing
+            print_r($e->getMessage() . "\n");
+        }
 
         Conversation::factory(100)->create();
         Message::factory(100)->create();
