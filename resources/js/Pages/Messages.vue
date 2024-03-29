@@ -1,10 +1,27 @@
 <script setup lang="ts">
     import { Head, Link } from '@inertiajs/vue3';
-    import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
+    import {
+        Menu,
+        MenuButton,
+        MenuItems,
+        MenuItem,
+        Tab,
+        TabGroup,
+        TabList,
+        TabPanels,
+        TabPanel
+    } from '@headlessui/vue';
     import { reactive, ref, computed } from 'vue';
     import ChatLayout from '@/Layouts/ChatLayout.vue';
     import { Contact } from '@/types';
     import contacts from '@/contactList.json';
+
+    const props = defineProps<{
+        conversations: Contact[];
+        users: Contact;
+    }>();
+
+    console.log(props);
 
     const contactList: Contact[] = reactive(contacts.data) as any;
 
@@ -79,13 +96,11 @@
 </script>
 
 <template>
-    <Head title="Messages" />
+    <Head title="Messenger" />
 
     <ChatLayout>
-        <div
-            class="max-w-7xl mx-auto chat-wrapper overflow-hidden"
-            :class="{ 'min-h-[999px]': chat.chatMenu }">
-            <div class="card chat-sidebar" :class="chat.chatMenu && '!block'">
+        <div class="chat-wrapper" :class="{ 'min-h-[999px]': chat.chatMenu }">
+            <TabGroup as="div" class="card chat-sidebar" :class="chat.chatMenu && '!block'">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div class="flex-none">
@@ -215,7 +230,11 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="javascript:;" class="dropdown-link">
+                                    <Link
+                                        :href="route('logout')"
+                                        method="post"
+                                        class="dropdown-link"
+                                        as="button">
                                         <svg
                                             width="24"
                                             height="24"
@@ -237,7 +256,7 @@
                                                 stroke-linecap="round"></path>
                                         </svg>
                                         Sign Out
-                                    </a>
+                                    </Link>
                                 </li>
                             </ul>
                         </MenuItems>
@@ -271,8 +290,8 @@
                         </svg>
                     </div>
                 </div>
-                <div class="flex items-center justify-between text-xs">
-                    <button type="button" class="group hover:text-primary">
+                <TabList class="flex items-center justify-between text-xs">
+                    <Tab type="button" class="group hover:text-primary">
                         <svg
                             width="24"
                             height="24"
@@ -292,9 +311,9 @@
                                 stroke-width="1.5"></circle>
                         </svg>
                         Chats
-                    </button>
+                    </Tab>
 
-                    <button type="button" class="group hover:text-primary">
+                    <Tab type="button" class="group hover:text-primary">
                         <svg
                             width="24"
                             height="24"
@@ -313,9 +332,9 @@
                                 stroke-width="1.5"></path>
                         </svg>
                         Calls
-                    </button>
+                    </Tab>
 
-                    <button type="button" class="group hover:text-primary">
+                    <Tab type="button" class="group hover:text-primary">
                         <svg
                             width="24"
                             height="24"
@@ -341,9 +360,9 @@
                                 stroke-linecap="round"></path>
                         </svg>
                         Contacts
-                    </button>
+                    </Tab>
 
-                    <button type="button" class="group hover:text-primary">
+                    <Tab type="button" class="group hover:text-primary">
                         <svg
                             width="24"
                             height="24"
@@ -363,49 +382,56 @@
                                 stroke-linecap="round"></path>
                         </svg>
                         Notification
-                    </button>
-                </div>
-                <div class="h-px w-full border-b border-[#e0e6ed] dark:border-[#1b2e4b]"></div>
-                <div class="!mt-0">
-                    <Simplebar data-simplebar class="chat-users my-2">
-                        <template v-for="person in searchUsers" :key="person.userId">
-                            <button
-                                type="button"
-                                class="chat-user-item"
-                                :class="{
-                                    'bg-gray-100 dark:bg-[#050b14] dark:text-primary text-primary':
-                                        selectedUser.userId === person.userId
-                                }"
-                                @click="selectUser(person)">
-                                <div class="flex-1">
-                                    <div class="flex items-center">
-                                        <div class="relative flex-shrink-0">
-                                            <img
-                                                :src="`/images/users/${person.path}`"
-                                                class="h-12 w-12 rounded-full object-cover" />
-                                            <template v-if="person.active">
-                                                <div class="absolute bottom-0 right-0">
-                                                    <div
-                                                        class="h-4 w-4 rounded-full bg-success"></div>
-                                                </div>
-                                            </template>
-                                        </div>
-                                        <div class="mx-3 text-left">
-                                            <p class="mb-1 font-semibold" v-html="person.name"></p>
-                                            <p
-                                                class="text-white-dark max-w-[185px] truncate text-xs"
-                                                v-html="person.preview"></p>
+                    </Tab>
+                </TabList>
+                <TabPanels>
+                    <div class="h-px w-full border-b border-[#e0e6ed] dark:border-[#1b2e4b]"></div>
+                    <TabPanel>
+                        <Simplebar class="chat-users my-2">
+                            <template v-for="person in searchUsers" :key="person.userId">
+                                <button
+                                    type="button"
+                                    class="chat-user-item"
+                                    :class="{
+                                        'bg-gray-100 dark:bg-[#050b14] dark:text-primary text-primary':
+                                            selectedUser.userId === person.userId
+                                    }"
+                                    @click="selectUser(person)">
+                                    <div class="flex-1">
+                                        <div class="flex items-center">
+                                            <div class="relative flex-shrink-0">
+                                                <img
+                                                    :src="`/images/users/${person.path}`"
+                                                    class="h-12 w-12 rounded-full object-cover" />
+                                                <template v-if="person.active">
+                                                    <div class="absolute bottom-0 right-0">
+                                                        <div
+                                                            class="h-4 w-4 rounded-full bg-success"></div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="mx-3 text-left">
+                                                <p
+                                                    class="mb-1 font-semibold"
+                                                    v-html="person.name"></p>
+                                                <p
+                                                    class="text-white-dark max-w-[185px] truncate text-xs"
+                                                    v-html="person.preview"></p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="whitespace-nowrap text-xs font-semibold">
-                                    <p v-html="person.time"></p>
-                                </div>
-                            </button>
-                        </template>
-                    </Simplebar>
-                </div>
-            </div>
+                                    <div class="whitespace-nowrap text-xs font-semibold">
+                                        <p v-html="person.time"></p>
+                                    </div>
+                                </button>
+                            </template>
+                        </Simplebar>
+                    </TabPanel>
+                    <TabPanel>Content 2</TabPanel>
+                    <TabPanel>Content 3 </TabPanel>
+                    <TabPanel>Content 4</TabPanel>
+                </TabPanels>
+            </TabGroup>
             <div
                 class="absolute z-[5] hidden h-full w-full rounded-md bg-black/60"
                 :class="chat.chatMenu && '!block xl:!hidden'"
