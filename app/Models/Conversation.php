@@ -16,17 +16,17 @@ class Conversation extends Model
         'username',
         'avatar_path',
         'is_active',
-        'latest_message',
-        'latest_message_time',
+        'last_message',
+        'last_message_time',
         'last_active_at'
     ];
 
-    public function from(): HasOne
+    public function fromUser(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'from_user_id');
     }
 
-    public function to(): HasOne
+    public function toUser(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'to_user_id');
     }
@@ -46,8 +46,8 @@ class Conversation extends Model
     public function getUserInfo()
     {
         return $this->to_user_id == auth()->id()
-            ? $this->from
-            : $this->to;
+            ? $this->fromUser
+            : $this->toUser;
     }
 
     public function getUsernameAttribute(): string
@@ -82,7 +82,7 @@ class Conversation extends Model
         return $this->messages->last();
     }
 
-    public function getLatestMessageAttribute(): string
+    public function getLastMessageAttribute(): string
     {
         $lastMessage = $this->getLastMessage();
         if ($lastMessage) {
@@ -97,25 +97,11 @@ class Conversation extends Model
         return 'No message yet';
     }
 
-    public function getLatestMessageTimeAttribute(): string
+    public function getLastMessageTimeAttribute(): string
     {
-        $lastMessage = $this->getLastMessage();
-        if ($lastMessage) {
-            $createdAt = $lastMessage->created_at;
-            // get date week name
-            $date = $createdAt->format('Y-m-d');
-            $week = $createdAt->format('l');
-            $time = $createdAt->format('h:i A');
-
-            if ($date == date('Y-m-d')) {
-                return $time;
-            } else if ($date == date('Y-m-d', strtotime('-1 day'))) {
-                return "Yesterday $time";
-            } else if ($date > date('Y-m-d', strtotime('-1 week'))) {
-                return "$week $time";
-            } else {
-                return $createdAt->format('d M Y');
-            }
+        $message = $this->getLastMessage();
+        if ($message) {
+            return $message->last_message_time;
         }
         return 'N/A';
     }

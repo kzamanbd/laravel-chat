@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helpers\Helpers;
+use App\Http\Requests\SendMessageRequest;
 use App\Models\Conversation;
+use App\Models\Message;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
 
 class MessageController extends Controller
@@ -16,9 +19,8 @@ class MessageController extends Controller
     public function index()
     {
         $conversations = Conversation::query()
-            ->where('from_user_id', auth()->id())
-            ->orWhere('to_user_id', auth()->id())
-            ->with(['from', 'to', 'messages'])
+            ->whereAny(['from_user_id', 'to_user_id'], auth()->id())
+            ->with(['fromUser:id,name,avatar_path', 'toUser:id,name,avatar_path', 'messages'])
             ->withCount(['unreadMessage'])
             ->orderBy('updated_at', 'desc')
             ->get();
@@ -28,5 +30,25 @@ class MessageController extends Controller
             'conversations' => $conversations,
             'users' => $users,
         ]);
+    }
+
+    public function store(SendMessageRequest $request)
+    {
+        $message = $request->input('message');
+        $conversationId = $request->input('conversation_id');
+
+        $messageText = preg_replace(Helpers::LINK_REGEX, Helpers::LINK_REPLACE, $message);
+        $messageText = preg_replace(Helpers::EMAIL_REGEX, Helpers::EMAIL_REPLACE, $messageText);
+        $messageText = preg_replace(Helpers::PHONE_REGEX, Helpers::PHONE_REPLACE, $messageText);
+
+        $message = Message::create([
+            'conversation_id' => $conversationId,
+            'user_id' => auth()->id(),
+            'message' => $messageText
+        ]);
+
+        Conversation::find($conversationId)->update(['updated_at' => now()]);
+
+        // broadcast(new MessageCreated($message, $this->targetUserId))->toOthers();
     }
 }

@@ -14,7 +14,8 @@ class Message extends Model
     protected $appends = [
         'username',
         'avatar_path',
-        'last_seen_time'
+        'last_seen_time',
+        'last_message_time'
     ];
 
     /**
@@ -50,5 +51,23 @@ class Message extends Model
     public function getAvatarPathAttribute(): string
     {
         return $this->user->avatar_path;
+    }
+    public function getLastMessageTimeAttribute(): string
+    {
+        $createdAt = $this->created_at;
+        // get date week name
+        $date = $createdAt->format('Y-m-d');
+        $week = $createdAt->format('l');
+        $time = $createdAt->format('h:i A');
+
+        if ($date == date('Y-m-d')) {
+            return $time;
+        } else if ($date == date('Y-m-d', strtotime('-1 day'))) {
+            return "Yesterday $time";
+        } else if ($date > date('Y-m-d', strtotime('-1 week'))) {
+            return "$week $time";
+        } else {
+            return $createdAt->format('d M Y');
+        }
     }
 }
