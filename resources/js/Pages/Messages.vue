@@ -88,18 +88,6 @@
 
     function sendMessage(): void {
         if (form.message.trim()) {
-            const user: Contact | undefined = contactList.find(
-                (d: any) => d.userId === selectedUser.value.userId
-            );
-            if (user) {
-                user.messages.push({
-                    id: 1,
-                    user_id: authUser.id,
-                    message: form.message,
-                    created_at: 'Just now'
-                });
-            }
-            scrollToBottom();
             form.post(route('messages.store'), {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -112,13 +100,15 @@
                     }
                 }
             });
+            scrollToBottom();
         }
     }
 
     function scrollToBottom(): void {
-        if (chat.value.chatUser) {
+        if (selectedConversation.value) {
             setTimeout(() => {
-                const element = document.querySelector('.chat-conversation-box') as HTMLElement;
+                const element = document.querySelector('#chat-box .simplebar-content') as HTMLElement;
+                console.log(element)
                 element?.scrollIntoView({
                     behavior: 'smooth',
                     block: 'end'
@@ -136,6 +126,7 @@
         }
         return Math.ceil(Math.random() * 10);
     }
+
     function getUserAvatarPath(src?: string) {
         if (src) {
             const img = new Image();
@@ -783,7 +774,9 @@
                         </div>
                     </div>
                     <div class="h-px w-full border-b border-[#e0e6ed] dark:border-[#1b2e4b]"></div>
-                    <Simplebar class="relative h-full overflow-auto sm:h-[calc(100vh_-_180px)]">
+                    <Simplebar
+                        class="relative h-full overflow-auto sm:h-[calc(100vh_-_180px)]"
+                        id="chat-box">
                         <div
                             v-for="(messages, groupName) in groupByMessages"
                             :key="groupName"
