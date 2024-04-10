@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Head, Link, useForm } from '@inertiajs/vue3';
+    import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
     import {
         Menu,
         MenuButton,
@@ -24,6 +24,8 @@
         users: Contact;
     }>();
 
+    const authUser = usePage().props.auth.user;
+
     const inputMessage = ref<HTMLInputElement | null>(null);
 
     console.log(props.conversations[0]);
@@ -42,9 +44,9 @@
         conversation_id: undefined
     });
 
-    const messages = computed(function () {
+    const groupByMessages = computed(function () {
         if (selectedConversation.value?.messages?.length) {
-            return groupBy(selectedConversation.value.messages, 'last_message_time');
+            return groupBy(selectedConversation.value.messages, 'last_msg_at');
         }
         return null;
     });
@@ -91,10 +93,10 @@
             );
             if (user) {
                 user.messages.push({
-                    fromUserId: selectedUser.value.userId,
-                    toUserId: 0,
-                    text: form.message,
-                    time: 'Just now'
+                    id: 1,
+                    user_id: authUser.id,
+                    message: form.message,
+                    created_at: 'Just now'
                 });
             }
             scrollToBottom();
@@ -134,7 +136,7 @@
         }
         return Math.ceil(Math.random() * 10);
     }
-    function setUserAvatarPath(src?: string) {
+    function getUserAvatarPath(src?: string) {
         if (src) {
             const img = new Image();
             img.src = src;
@@ -161,11 +163,11 @@
                     <div class="flex items-center">
                         <div class="flex-none">
                             <img
-                                src="/images/users/avatar-1.png"
+                                :src="getUserAvatarPath(authUser.avatar_path)"
                                 class="h-12 w-12 rounded-full object-cover" />
                         </div>
                         <div class="mx-3">
-                            <p class="mb-1 font-semibold">Alon Smith</p>
+                            <p class="mb-1 font-semibold">{{ authUser.name }}</p>
                             <p class="text-white-dark text-xs">Software Developer</p>
                         </div>
                     </div>
@@ -478,7 +480,7 @@
                                     </div>
                                 </div>
                                 <div class="whitespace-nowrap text-xs font-semibold">
-                                    <p v-html="item.last_message_time"></p>
+                                    <p v-html="item.last_msg_at"></p>
                                 </div>
                             </button>
                         </Simplebar>
@@ -529,23 +531,23 @@
                             </button>
                             <div class="relative flex-none">
                                 <img
-                                    :src="setUserAvatarPath(selectedConversation.username)"
+                                    :src="getUserAvatarPath(selectedConversation.username)"
                                     class="h-10 w-10 rounded-full object-cover sm:h-12 sm:w-12" />
                                 <div class="absolute bottom-0 right-0">
                                     <div class="h-4 w-4 rounded-full bg-success"></div>
                                 </div>
                             </div>
                             <div class="mx-3">
-                                <p
-                                    class="font-semibold"
-                                    v-html="selectedConversation.username"></p>
-                                <p
-                                    class="text-white-dark text-xs"
-                                    v-html="
+                                <p class="font-semibold">
+                                    {{ selectedConversation.username }}
+                                </p>
+                                <p class="text-white-dark text-xs">
+                                    {{
                                         selectedConversation.active
                                             ? 'Active now'
-                                            : 'Last seen at ' + selectedConversation.last_message_time
-                                    "></p>
+                                            : 'Last seen at ' + selectedConversation.last_msg_at
+                                    }}
+                                </p>
                             </div>
                         </div>
                         <div class="flex gap-3 sm:gap-5">
@@ -782,32 +784,35 @@
                     </div>
                     <div class="h-px w-full border-b border-[#e0e6ed] dark:border-[#1b2e4b]"></div>
                     <Simplebar class="relative h-full overflow-auto sm:h-[calc(100vh_-_180px)]">
-                        <div class="chat-conversation-box">
+                        <div
+                            v-for="(messages, groupName) in groupByMessages"
+                            :key="groupName"
+                            class="chat-conversation-box">
                             <div class="m-6 mt-0 block">
                                 <h4
                                     class="relative border-b border-[#f4f4f4] text-center text-xs dark:border-gray-800">
-                                    <span
-                                        class="relative top-2 bg-white px-3 dark:bg-[#0e1726]"
-                                        v-html="'Today, ' + selectedUser.time"></span>
+                                    <span class="relative top-2 bg-white px-3 dark:bg-[#0e1726]">
+                                        {{ groupName }}
+                                    </span>
                                 </h4>
                             </div>
-                            <template v-for="message in selectedUser.messages" :key="message.id">
+                            <template v-for="message in messages" :key="message.id">
                                 <div
                                     class="flex items-start gap-3"
                                     :class="{
-                                        'justify-end': selectedUser.userId === message.fromUserId
+                                        'justify-end': authUser.id === message.user_id
                                     }">
                                     <div
                                         class="flex-none"
                                         :class="{
-                                            'order-2': selectedUser.userId === message.fromUserId
+                                            'order-2': authUser.id === message.user_id
                                         }">
-                                        <template v-if="selectedUser.userId === message.fromUserId">
+                                        <template v-if="authUser.id === message.user_id">
                                             <img
                                                 :src="`/images/users/${chat.loginUser.path}`"
                                                 class="h-10 w-10 rounded-full object-cover" />
                                         </template>
-                                        <template v-if="selectedUser.userId !== message.fromUserId">
+                                        <template v-if="authUser.id !== message.user_id">
                                             <img
                                                 :src="`/images/users/${selectedUser.path}`"
                                                 class="h-10 w-10 rounded-full object-cover" />
@@ -818,15 +823,14 @@
                                             <div
                                                 class="rounded-md bg-black/10 p-4 py-2 dark:bg-gray-800"
                                                 :class="
-                                                    message.fromUserId == selectedUser.userId
+                                                    authUser.id == message.user_id
                                                         ? 'rounded-br-none  !bg-primary text-white'
                                                         : 'rounded-bl-none'
                                                 "
-                                                v-html="message.text"></div>
+                                                v-html="message.message"></div>
                                             <div
                                                 :class="{
-                                                    hidden:
-                                                        selectedUser.userId === message.fromUserId
+                                                    hidden: authUser.id === message.user_id
                                                 }">
                                                 <svg
                                                     width="24"
@@ -862,10 +866,11 @@
                                         <div
                                             class="text-white-dark text-xs"
                                             :class="{
-                                                'text-right ':
-                                                    selectedUser.userId === message.fromUserId
+                                                'text-right ': authUser.id === message.user_id
                                             }"
-                                            v-html="message.time ? message.time : '5h ago'"></div>
+                                            v-html="
+                                                message.created_at ? message.created_at : '5h ago'
+                                            "></div>
                                     </div>
                                 </div>
                             </template>

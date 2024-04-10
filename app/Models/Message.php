@@ -14,8 +14,8 @@ class Message extends Model
     protected $appends = [
         'username',
         'avatar_path',
+        'last_msg_at',
         'last_seen_time',
-        'last_message_time'
     ];
 
     /**
@@ -52,7 +52,7 @@ class Message extends Model
     {
         return $this->user->avatar_path;
     }
-    public function getLastMessageTimeAttribute(): string
+    public function getLastMsgAtAttribute(): string
     {
         $createdAt = $this->created_at;
         // get date week name

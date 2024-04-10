@@ -17,7 +17,7 @@ class Conversation extends Model
         'avatar_path',
         'is_active',
         'last_message',
-        'last_message_time',
+        'last_msg_at',
         'last_active_at'
     ];
 
@@ -97,11 +97,11 @@ class Conversation extends Model
         return 'No message yet';
     }
 
-    public function getLastMessageTimeAttribute(): string
+    public function getLastMsgAtAttribute(): string
     {
         $message = $this->getLastMessage();
         if ($message) {
-            return $message->last_message_time;
+            return $message->last_msg_at;
         }
         return 'N/A';
     }
