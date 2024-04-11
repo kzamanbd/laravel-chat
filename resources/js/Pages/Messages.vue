@@ -28,7 +28,8 @@
 
     const inputMessage = ref<HTMLInputElement | null>(null);
 
-    console.log(props.conversations[0].messages[0]);
+    // @ts-ignore
+    console.log(props.conversations[0].messages.at(-1)?.msg_group);
 
     const contactList: Contact[] = reactive(contacts.data) as any;
 
@@ -46,7 +47,7 @@
 
     const groupByMessages = computed(function () {
         if (selectedConversation.value?.messages?.length) {
-            return groupBy(selectedConversation.value.messages, 'last_msg_at');
+            return groupBy(selectedConversation.value.messages, 'msg_group');
         }
         return null;
     });
@@ -802,16 +803,14 @@
                                         :class="{
                                             'order-2': authUser.id === message.user_id
                                         }">
-                                        <template v-if="authUser.id === message.user_id">
-                                            <img
-                                                :src="`/images/users/${chat.loginUser.path}`"
-                                                class="h-10 w-10 rounded-full object-cover" />
-                                        </template>
-                                        <template v-if="authUser.id !== message.user_id">
-                                            <img
-                                                :src="`/images/users/${selectedUser.path}`"
-                                                class="h-10 w-10 rounded-full object-cover" />
-                                        </template>
+                                        <img
+                                            v-if="authUser.id === message.user_id"
+                                            :src="`/images/users/${chat.loginUser.path}`"
+                                            class="h-10 w-10 rounded-full object-cover" />
+                                        <img
+                                            v-else
+                                            :src="getUserAvatarPath(message.avatar_path)"
+                                            class="h-10 w-10 rounded-full object-cover" />
                                     </div>
                                     <div class="space-y-2">
                                         <div class="flex items-center gap-3">

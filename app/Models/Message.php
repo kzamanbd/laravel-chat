@@ -16,7 +16,7 @@ class Message extends Model
         'msg_group',
         'avatar_path',
         'last_msg_at',
-        'last_seen_time',
+        'msg_seen_at',
         'formatted_time'
     ];
 
@@ -37,7 +37,7 @@ class Message extends Model
         return $this->belongsTo(Conversation::class, 'conversation_id', 'id');
     }
 
-    public function getLastSeenTimeAttribute()
+    public function getMsgSeenAtAttribute()
     {
         return $this->seen_at
             ? $this->seen_at->diffForHumans()
@@ -67,7 +67,14 @@ class Message extends Model
         $week = $createdAt->format('l');
         $time = $createdAt->format('h:i A');
 
-        return $createdAt;
+        if ($date == date('Y-m-d')) {
+            return 'Today';
+        } else if ($date == date('Y-m-d', strtotime('-1 day'))) {
+            return "Yesterday";
+        } else if ($date > date('Y-m-d', strtotime('-1 week'))) {
+            return "$week";
+        }
+        return $createdAt->format('d M Y');
     }
 
     public function getLastMsgAtAttribute(): string

@@ -19,6 +19,7 @@ export type Message = {
     created_at: string;
     msg_group: string;
     formatted_time: string;
+    avatar_path: string;
 };
 
 export type Conversation = {
