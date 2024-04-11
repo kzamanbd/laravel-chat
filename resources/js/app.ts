@@ -1,3 +1,4 @@
+// import './echo';
 import './bootstrap';
 import '../css/app.css';
 import 'simplebar/dist/simplebar.min.css';
