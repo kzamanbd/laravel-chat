@@ -13,19 +13,24 @@ class Message extends Model
     protected $guarded = [];
     protected $appends = [
         'username',
+        'msg_group',
         'avatar_path',
         'last_msg_at',
         'last_seen_time',
+        'formatted_time'
     ];
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'seen_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'seen_at' => 'datetime',
+        ];
+    }
 
     public function conversation(): BelongsTo
     {
@@ -48,10 +53,23 @@ class Message extends Model
     {
         return $this->user->name;
     }
+
     public function getAvatarPathAttribute(): string
     {
         return $this->user->avatar_path;
     }
+
+    public function getMsgGroupAttribute(): string
+    {
+        $createdAt = $this->created_at;
+        // get date week name
+        $date = $createdAt->format('Y-m-d');
+        $week = $createdAt->format('l');
+        $time = $createdAt->format('h:i A');
+
+        return $createdAt;
+    }
+
     public function getLastMsgAtAttribute(): string
     {
         $createdAt = $this->created_at;
@@ -66,8 +84,12 @@ class Message extends Model
             return "Yesterday $time";
         } else if ($date > date('Y-m-d', strtotime('-1 week'))) {
             return "$week $time";
-        } else {
-            return $createdAt->format('d M Y');
         }
+        return $createdAt->format('d M Y');
+    }
+
+    public function getFormattedTimeAttribute()
+    {
+        return $this->created_at->diffForHumans();
     }
 }

@@ -208,7 +208,7 @@
         @apply relative h-[calc(100vh_-_75px)] overflow-auto sm:h-[calc(100vh_-_150px)];
     }
     .chat-conversation-box {
-        @apply min-h-[400px] space-y-5 p-4 pb-[68px] sm:min-h-[300px] sm:pb-0;
+        @apply space-y-5 p-4 pb-[68px] sm:pb-0;
     }
     .chat-overlay {
         @apply absolute z-[5] hidden h-full w-full rounded-md bg-black/60;

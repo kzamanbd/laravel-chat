@@ -28,7 +28,7 @@
 
     const inputMessage = ref<HTMLInputElement | null>(null);
 
-    console.log(props.conversations[0]);
+    console.log(props.conversations[0].messages[0]);
 
     const contactList: Contact[] = reactive(contacts.data) as any;
 
@@ -107,8 +107,10 @@
     function scrollToBottom(): void {
         if (selectedConversation.value) {
             setTimeout(() => {
-                const element = document.querySelector('#chat-box .simplebar-content') as HTMLElement;
-                console.log(element)
+                const element = document.querySelector(
+                    '#chat-box .simplebar-content'
+                ) as HTMLElement;
+                console.log(element);
                 element?.scrollIntoView({
                     behavior: 'smooth',
                     block: 'end'
@@ -860,10 +862,9 @@
                                             class="text-white-dark text-xs"
                                             :class="{
                                                 'text-right ': authUser.id === message.user_id
-                                            }"
-                                            v-html="
-                                                message.created_at ? message.created_at : '5h ago'
-                                            "></div>
+                                            }">
+                                            {{ message.formatted_time }}
+                                        </div>
                                     </div>
                                 </div>
                             </template>

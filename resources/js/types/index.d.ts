@@ -17,14 +17,16 @@ export type Message = {
     user_id: number;
     message: string;
     created_at: string;
+    msg_group: string;
+    formatted_time: string;
 };
 
 export type Conversation = {
     id: number;
+    uuid: string;
     username: string;
     from_user: User;
     to_user: User;
-    uuid: string;
     last_message: string;
     last_msg_at: string;
     messages: Message[];

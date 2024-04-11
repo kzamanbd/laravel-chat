@@ -50,5 +50,10 @@ class MessageController extends Controller
         Conversation::find($conversationId)->update(['updated_at' => now()]);
 
         // broadcast(new MessageCreated($message, $this->targetUserId))->toOthers();
+
+        return response()->json([
+            'success' => true,
+            'data' => $message
+        ]);
     }
 }
