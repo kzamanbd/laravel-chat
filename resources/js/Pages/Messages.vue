@@ -14,27 +14,22 @@
 
     import { groupBy } from 'lodash';
 
-    import { reactive, ref, computed } from 'vue';
+    import { reactive, ref, computed, onBeforeMount } from 'vue';
     import ChatLayout from '@/Layouts/ChatLayout.vue';
-    import { Contact, Conversation } from '@/types';
+    import { User, Conversation } from '@/types';
     import contacts from '@/contactList.json';
 
     const props = defineProps<{
         conversations: Conversation[];
-        users: Contact;
+        users: User[];
     }>();
 
     const authUser = usePage().props.auth.user;
 
     const inputMessage = ref<HTMLInputElement | null>(null);
 
-    // @ts-ignore
-    console.log(props.conversations[0].messages.at(-1)?.msg_group);
+    console.log(props.users[0]);
 
-    const contactList: Contact[] = reactive(contacts.data) as any;
-
-    // @ts-ignore
-    const selectedUser = ref<Contact>({});
     const selectedConversation = ref<Conversation | null>(null);
 
     const form = useForm<{
@@ -55,30 +50,23 @@
     const chat = ref({
         chatMenu: false,
         chatUser: false,
-        loginUser: {
-            id: 0,
-            name: 'Jon Doe',
-            path: 'avatar-1.png',
-            designation: 'Software Developer'
-        },
-
         searchUser: ''
     });
 
-    const searchUsers = computed(() => {
+    const filteredConversations = computed(() => {
         setTimeout(() => {
             const element = document.querySelector('.chat-users') as HTMLElement;
             if (element) {
                 element.scrollTop = 0;
             }
         });
-        return contactList.filter((d: Contact) => {
-            return d.name.toLowerCase().includes(chat.value.searchUser);
+
+        return props.conversations.filter((d: Conversation) => {
+            return d.username.toLowerCase().includes(chat.value.searchUser.toLowerCase());
         });
     });
 
-    function selectUser(item: Conversation): void {
-        console.log(item);
+    function selectedItem(item: Conversation): void {
         form.conversation_id = item.id;
         selectedConversation.value = item;
         chat.value.chatUser = true;
@@ -89,7 +77,7 @@
 
     function sendMessage(): void {
         if (form.message.trim()) {
-            form.post(route('messages.store'), {
+            form.post(route('message.store'), {
                 preserveScroll: true,
                 onSuccess: () => {
                     form.reset();
@@ -119,32 +107,6 @@
             });
         }
     }
-
-    function getRandomNumber(id?: number): number {
-        if (id) {
-            const mod = id % 10;
-            if (mod > 0) {
-                return mod;
-            }
-        }
-        return Math.ceil(Math.random() * 10);
-    }
-
-    function getUserAvatarPath(src?: string) {
-        if (src) {
-            const img = new Image();
-            img.src = src;
-
-            if (img.complete) {
-                return src;
-            } else {
-                img.onload = () => {
-                    return src;
-                };
-            }
-        }
-        return `/images/users/avatar-${getRandomNumber()}.png`;
-    }
 </script>
 
 <template>
@@ -157,7 +119,7 @@
                     <div class="flex items-center">
                         <div class="flex-none">
                             <img
-                                :src="getUserAvatarPath(authUser.avatar_path)"
+                                :src="authUser.avatar_path"
                                 class="h-12 w-12 rounded-full object-cover" />
                         </div>
                         <div class="mx-3">
@@ -442,26 +404,26 @@
                         <Simplebar class="chat-users my-2">
                             <button
                                 type="button"
-                                v-for="item in conversations"
+                                v-for="item in filteredConversations"
                                 :key="item.id"
                                 class="chat-user-item"
                                 :class="{
                                     'bg-gray-100 dark:bg-[#050b14] dark:text-primary text-primary':
                                         selectedConversation?.id === item.id
                                 }"
-                                @click="selectUser(item)">
+                                @click="selectedItem(item)">
                                 <div class="flex-1">
                                     <div class="flex items-center">
                                         <div class="relative flex-shrink-0">
                                             <img
-                                                :src="`/images/users/avatar-${getRandomNumber(item.id)}.png`"
+                                                :src="item.avatar_path"
                                                 class="h-12 w-12 rounded-full object-cover" />
-                                            <template v-if="item.active">
-                                                <div class="absolute bottom-0 right-0">
-                                                    <div
-                                                        class="h-4 w-4 rounded-full bg-success"></div>
-                                                </div>
-                                            </template>
+
+                                            <div
+                                                v-if="item.active"
+                                                class="absolute bottom-0 right-0">
+                                                <div class="h-4 w-4 rounded-full bg-success"></div>
+                                            </div>
                                         </div>
                                         <div class="mx-3 text-left">
                                             <p class="mb-1 font-semibold">{{ item.username }}</p>
@@ -524,7 +486,7 @@
                             </button>
                             <div class="relative flex-none">
                                 <img
-                                    :src="getUserAvatarPath(selectedConversation.username)"
+                                    :src="selectedConversation.avatar_path"
                                     class="h-10 w-10 rounded-full object-cover sm:h-12 sm:w-12" />
                                 <div class="absolute bottom-0 right-0">
                                     <div class="h-4 w-4 rounded-full bg-success"></div>
@@ -803,12 +765,7 @@
                                             'order-2': authUser.id === message.user_id
                                         }">
                                         <img
-                                            v-if="authUser.id === message.user_id"
-                                            :src="`/images/users/${chat.loginUser.path}`"
-                                            class="h-10 w-10 rounded-full object-cover" />
-                                        <img
-                                            v-else
-                                            :src="getUserAvatarPath(message.avatar_path)"
+                                            :src="message.avatar_path"
                                             class="h-10 w-10 rounded-full object-cover" />
                                     </div>
                                     <div class="space-y-2">

@@ -16,14 +16,17 @@ class MessageController extends Controller
     {
         return Inertia::render('Dashboard');
     }
+
     public function index()
     {
+
         $conversations = Conversation::query()
             ->whereAny(['from_user_id', 'to_user_id'], auth()->id())
             ->with(['fromUser:id,name,avatar_path', 'toUser:id,name,avatar_path', 'messages'])
             ->withCount(['unreadMessage'])
             ->orderBy('updated_at', 'desc')
             ->get();
+
         $users = User::query()->whereNot('id', auth()->id())->get();
 
         return Inertia::render('Messages', [

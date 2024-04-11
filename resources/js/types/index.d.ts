@@ -28,6 +28,7 @@ export type Conversation = {
     username: string;
     from_user: User;
     to_user: User;
+    avatar_path: string;
     last_message: string;
     last_msg_at: string;
     messages: Message[];
