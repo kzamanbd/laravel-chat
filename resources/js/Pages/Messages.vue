@@ -487,7 +487,7 @@
 
             <div
                 class="chat-overlay"
-                :class="chat.chatMenu && '!block xl:!hidden'"
+                :class="chat.chatMenu && '!block lg:!hidden'"
                 @click="chat.chatMenu = !chat.chatMenu"></div>
 
             <div class="card flex-1 p-0">
@@ -496,7 +496,7 @@
                         <div class="flex items-center space-x-2">
                             <button
                                 type="button"
-                                class="hover:text-primary xl:hidden"
+                                class="hover:text-primary lg:hidden"
                                 @click="chat.chatMenu = !chat.chatMenu">
                                 <svg
                                     width="24"
