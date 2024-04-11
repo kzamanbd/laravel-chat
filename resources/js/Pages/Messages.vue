@@ -464,17 +464,16 @@
                                             </template>
                                         </div>
                                         <div class="mx-3 text-left">
+                                            <p class="mb-1 font-semibold">{{ item.username }}</p>
                                             <p
-                                                class="mb-1 font-semibold"
-                                                v-html="item.username"></p>
-                                            <p
-                                                class="text-white-dark max-w-[185px] truncate text-xs"
-                                                v-html="item.last_message"></p>
+                                                class="text-white-dark max-w-[185px] truncate text-xs">
+                                                {{ item.last_message }}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="whitespace-nowrap text-xs font-semibold">
-                                    <p v-html="item.last_msg_at"></p>
+                                    <p>{{ item.last_msg_at }}</p>
                                 </div>
                             </button>
                         </Simplebar>

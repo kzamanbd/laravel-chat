@@ -213,6 +213,9 @@
     .chat-overlay {
         @apply absolute z-[5] hidden h-full w-full rounded-md bg-black/60;
     }
+    .chat-conversation-box a {
+        @apply underline;
+    }
 }
 @tailwind utilities;
 .simplebar-scrollbar:before {
