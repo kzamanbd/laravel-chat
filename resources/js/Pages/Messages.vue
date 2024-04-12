@@ -21,6 +21,7 @@
         auth: any;
         conversations: Conversation[];
         users: User[];
+        // selectedConversation?: Conversation;
     }>();
 
     const authUser = props.auth.user;
@@ -44,6 +45,7 @@
         if (selectedConversation.value?.messages?.length) {
             return groupBy(selectedConversation.value.messages, 'msg_group');
         }
+
         return null;
     });
 
@@ -62,7 +64,7 @@
         });
 
         return props.conversations.filter((d: Conversation) => {
-            return d.username.toLowerCase().includes(chat.value.searchUser.toLowerCase());
+            return d.participant.name.toLowerCase().includes(chat.value.searchUser.toLowerCase());
         });
     });
 
@@ -78,10 +80,12 @@
         form.to_user_id = user.id;
         form.conversation_id = null;
         const item = {
-            username: user.name,
-            avatar_path: user.avatar_path,
+            participant: {
+                name: user.name,
+                avatar_path: user.avatar_path
+            },
             last_msg_at: 'now',
-            active: true,
+            is_active: true
         } as Conversation;
         selectedConversation.value = item;
     };
@@ -437,17 +441,19 @@
                                     <div class="flex items-center">
                                         <div class="relative flex-shrink-0">
                                             <img
-                                                :src="item.avatar_path"
+                                                :src="item.participant.avatar_path"
                                                 class="h-12 w-12 rounded-full object-cover" />
 
                                             <div
-                                                v-if="item.active"
+                                                v-if="item.is_active"
                                                 class="absolute bottom-0 right-0">
                                                 <div class="h-4 w-4 rounded-full bg-success"></div>
                                             </div>
                                         </div>
                                         <div class="mx-3 text-left">
-                                            <p class="mb-1 font-semibold">{{ item.username }}</p>
+                                            <p class="mb-1 font-semibold">
+                                                {{ item.participant.name }}
+                                            </p>
                                             <p
                                                 class="text-white-dark max-w-[185px] truncate text-xs">
                                                 {{ item.msg_preview }}
@@ -512,7 +518,7 @@
                 @click="chat.chatMenu = !chat.chatMenu"></div>
 
             <div class="card flex-1 p-0">
-                <div v-if="chat.chatUser && selectedConversation" class="relative h-full">
+                <div v-if="selectedConversation" class="relative h-full">
                     <div class="flex items-center justify-between p-4">
                         <div class="flex items-center space-x-2">
                             <button
@@ -546,7 +552,7 @@
                             </button>
                             <div class="relative flex-none">
                                 <img
-                                    :src="selectedConversation.avatar_path"
+                                    :src="selectedConversation.participant.avatar_path"
                                     class="h-10 w-10 rounded-full object-cover sm:h-12 sm:w-12" />
                                 <div class="absolute bottom-0 right-0">
                                     <div class="h-4 w-4 rounded-full bg-success"></div>
@@ -554,11 +560,11 @@
                             </div>
                             <div class="mx-3">
                                 <p class="font-semibold">
-                                    {{ selectedConversation.username }}
+                                    {{ selectedConversation.participant.name }}
                                 </p>
                                 <p class="text-white-dark text-xs">
                                     {{
-                                        selectedConversation.active
+                                        selectedConversation.is_active
                                             ? 'Active now'
                                             : 'Last seen at ' + selectedConversation.last_msg_at
                                     }}

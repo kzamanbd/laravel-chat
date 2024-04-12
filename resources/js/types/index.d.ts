@@ -27,14 +27,11 @@ export type Message = {
 export type Conversation = {
     id: number;
     uuid: string;
-    username: string;
-    from_user: User;
-    to_user: User;
-    avatar_path: string;
+    participant: User;
     msg_preview: string;
     last_msg_at: string;
     messages: Message[];
-    active: boolean;
+    is_active: boolean;
 };
 
 export type Contact = {

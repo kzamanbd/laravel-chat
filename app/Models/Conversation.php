@@ -13,8 +13,7 @@ class Conversation extends Model
     use HasFactory;
     protected $guarded = [];
     protected $appends = [
-        'username',
-        'avatar_path',
+        'participant',
         'is_active',
         'msg_preview',
         'last_msg_at',
@@ -44,21 +43,11 @@ class Conversation extends Model
             ->where('is_seen', 0);
     }
 
-    public function getUserInfo()
+    public function getParticipantAttribute()
     {
         return $this->to_user_id == auth()->id()
             ? $this->fromUser
             : $this->toUser;
-    }
-
-    public function getUsernameAttribute(): string
-    {
-        return $this->getUserInfo()->name;
-    }
-
-    public function getAvatarPathAttribute(): string
-    {
-        return $this->getUserInfo()->avatar_path;
     }
 
     public function getIsActiveAttribute(): bool
