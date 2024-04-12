@@ -17,7 +17,7 @@ class MessageController extends Controller
         return Inertia::render('Dashboard');
     }
 
-    public function index()
+    public function index($uuid = null)
     {
         $conversations = Conversation::query()
             ->whereAny(['from_user_id', 'to_user_id'], auth()->id())
@@ -32,10 +32,18 @@ class MessageController extends Controller
         ))->unique();
 
         $users = User::query()->whereNotIn('id', $ids)->get();
+        $selectedConversation = null;
+        if ($uuid) {
+            $selectedConversation = Conversation::query()
+                ->with(['fromUser:id,name,avatar_path', 'toUser:id,name,avatar_path', 'messages'])
+                ->where('uuid', $uuid)
+                ->first();
+        }
 
         return Inertia::render('Messages', [
             'conversations' => $conversations,
             'users' => $users,
+            'selectedConversation' => $selectedConversation
         ]);
     }
 

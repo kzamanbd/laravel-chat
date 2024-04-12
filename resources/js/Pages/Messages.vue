@@ -21,14 +21,13 @@
         auth: any;
         conversations: Conversation[];
         users: User[];
-        // selectedConversation?: Conversation;
+        selectedConversation?: Conversation;
     }>();
 
     const authUser = props.auth.user;
 
     const inputMessage = ref<HTMLInputElement | null>(null);
 
-    const selectedConversation = ref<Conversation | null>(null);
     const selectedUser = ref<User | null>(null);
 
     const form = useForm<{
@@ -42,10 +41,9 @@
     });
 
     const groupByMessages = computed(function () {
-        if (selectedConversation.value?.messages?.length) {
-            return groupBy(selectedConversation.value.messages, 'msg_group');
+        if (props.selectedConversation?.messages?.length) {
+            return groupBy(props.selectedConversation.messages, 'msg_group');
         }
-
         return null;
     });
 
@@ -87,13 +85,11 @@
             last_msg_at: 'now',
             is_active: true
         } as Conversation;
-        selectedConversation.value = item;
     };
 
     function selectedItem(item: Conversation): void {
         form.to_user_id = null;
         form.conversation_id = item.id;
-        selectedConversation.value = item;
         chat.value.chatUser = true;
         chat.value.chatMenu = false;
         inputMessage.value?.focus();
@@ -119,7 +115,7 @@
     }
 
     function scrollToBottom(): void {
-        if (selectedConversation.value) {
+        if (props.selectedConversation) {
             setTimeout(() => {
                 const element = document.querySelector(
                     '#chat-box .simplebar-content'
@@ -427,8 +423,8 @@
                     <div class="h-px w-full border-b border-[#e0e6ed] dark:border-[#1b2e4b]"></div>
                     <TabPanel>
                         <Simplebar class="chat-users my-2">
-                            <button
-                                type="button"
+                            <Link
+                                :href="route('message.index', { uuid: item.uuid })"
                                 v-for="item in filteredConversations"
                                 :key="item.id"
                                 class="chat-user-item"
@@ -464,7 +460,7 @@
                                 <div class="whitespace-nowrap text-xs font-semibold">
                                     <p>{{ item.last_msg_at }}</p>
                                 </div>
-                            </button>
+                            </Link>
                         </Simplebar>
                     </TabPanel>
                     <TabPanel>Content 2</TabPanel>
