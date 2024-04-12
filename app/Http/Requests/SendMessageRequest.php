@@ -22,8 +22,7 @@ class SendMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => 'required',
-            'conversation_id' => 'required'
+            'message' => 'required'
         ];
     }
 }

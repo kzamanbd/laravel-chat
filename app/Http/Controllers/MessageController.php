@@ -7,8 +7,8 @@ use App\Http\Requests\SendMessageRequest;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class MessageController extends Controller
 {
@@ -26,7 +26,12 @@ class MessageController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get();
 
-        $users = User::query()->whereNot('id', auth()->id())->get();
+        $ids = collect(array_merge(
+            $conversations->pluck('from_user_id')->toArray(),
+            $conversations->pluck('to_user_id')->toArray()
+        ))->unique();
+
+        $users = User::query()->whereNotIn('id', $ids)->get();
 
         return Inertia::render('Messages', [
             'conversations' => $conversations,
@@ -38,6 +43,24 @@ class MessageController extends Controller
     {
         $message = $request->input('message');
         $conversationId = $request->input('conversation_id');
+
+        if (empty($conversationId)) {
+            // check already has create a conversation
+            $row = Conversation::where([
+                'from_user_id' => auth()->id(),
+                'to_user_id' => $request->input('to_user_id')
+            ])->first();
+
+            if (!$row) {
+                $conversationId =  Conversation::insertGetId([
+                    'from_user_id' => auth()->id(),
+                    'to_user_id' => $request->input('to_user_id'),
+                    'uuid' => Str::uuid()
+                ]);
+            } else {
+                $conversationId = $row->id;
+            }
+        }
 
         $messageText = preg_replace(Helpers::LINK_REGEX, Helpers::LINK_REPLACE, $message);
         $messageText = preg_replace(Helpers::EMAIL_REGEX, Helpers::EMAIL_REPLACE, $messageText);

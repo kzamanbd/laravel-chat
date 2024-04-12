@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+    import { Head, Link, useForm } from '@inertiajs/vue3';
     import {
         Menu,
         MenuButton,
@@ -13,31 +13,31 @@
     } from '@headlessui/vue';
 
     import { groupBy } from 'lodash';
-
-    import { reactive, ref, computed, onBeforeMount } from 'vue';
-    import ChatLayout from '@/Layouts/ChatLayout.vue';
+    import { ref, computed } from 'vue';
     import { User, Conversation } from '@/types';
-    import contacts from '@/contactList.json';
+    import ChatLayout from '@/Layouts/ChatLayout.vue';
 
     const props = defineProps<{
+        auth: any;
         conversations: Conversation[];
         users: User[];
     }>();
 
-    const authUser = usePage().props.auth.user;
+    const authUser = props.auth.user;
 
     const inputMessage = ref<HTMLInputElement | null>(null);
 
-    console.log(props.users[0]);
-
     const selectedConversation = ref<Conversation | null>(null);
+    const selectedUser = ref<User | null>(null);
 
     const form = useForm<{
         message: string;
-        conversation_id: number | undefined;
+        conversation_id: number | null;
+        to_user_id: number | null;
     }>({
         message: '',
-        conversation_id: undefined
+        conversation_id: null,
+        to_user_id: null
     });
 
     const groupByMessages = computed(function () {
@@ -66,7 +66,28 @@
         });
     });
 
+    const filteredUsers = computed(() => {
+        return props.users;
+    });
+
+    const selectedNewUser = (user: User): void => {
+        selectedUser.value = user;
+        chat.value.chatUser = true;
+        chat.value.chatMenu = false;
+        inputMessage.value?.focus();
+        form.to_user_id = user.id;
+        form.conversation_id = null;
+        const item = {
+            username: user.name,
+            avatar_path: user.avatar_path,
+            last_msg_at: 'now',
+            active: true,
+        } as Conversation;
+        selectedConversation.value = item;
+    };
+
     function selectedItem(item: Conversation): void {
+        form.to_user_id = null;
         form.conversation_id = item.id;
         selectedConversation.value = item;
         chat.value.chatUser = true;
@@ -99,7 +120,7 @@
                 const element = document.querySelector(
                     '#chat-box .simplebar-content'
                 ) as HTMLElement;
-                console.log(element);
+
                 element?.scrollIntoView({
                     behavior: 'smooth',
                     block: 'end'
@@ -441,7 +462,46 @@
                         </Simplebar>
                     </TabPanel>
                     <TabPanel>Content 2</TabPanel>
-                    <TabPanel>Content 3 </TabPanel>
+                    <TabPanel>
+                        <Simplebar class="chat-users my-2">
+                            <button
+                                type="button"
+                                v-for="item in filteredUsers"
+                                :key="item.id"
+                                class="chat-user-item"
+                                :class="{
+                                    'bg-gray-100 dark:bg-[#050b14] dark:text-primary text-primary':
+                                        selectedUser?.id === item.id
+                                }"
+                                @click="selectedNewUser(item)">
+                                <div class="flex-1">
+                                    <div class="flex items-center">
+                                        <div class="relative flex-shrink-0">
+                                            <img
+                                                :src="item.avatar_path"
+                                                class="h-12 w-12 rounded-full object-cover" />
+
+                                            <div
+                                                v-if="item.active"
+                                                class="absolute bottom-0 right-0">
+                                                <div class="h-4 w-4 rounded-full bg-success"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mx-3 text-left">
+                                            <p class="mb-1 font-semibold">{{ item.name }}</p>
+                                            <p
+                                                class="text-white-dark max-w-[185px] truncate text-xs">
+                                                {{ item.email }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="whitespace-nowrap text-xs font-semibold">
+                                    <p>Yesterday 09:31 PM</p>
+                                </div>
+                            </button>
+                        </Simplebar>
+                    </TabPanel>
                     <TabPanel>Content 4</TabPanel>
                 </TabPanels>
             </TabGroup>
