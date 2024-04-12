@@ -16,7 +16,7 @@ class Conversation extends Model
         'username',
         'avatar_path',
         'is_active',
-        'last_message',
+        'msg_preview',
         'last_msg_at',
         'last_active_at'
     ];
@@ -83,7 +83,7 @@ class Conversation extends Model
         return $this->messages->last();
     }
 
-    public function getLastMessageAttribute(): string
+    public function getMsgPreviewAttribute(): string
     {
         $lastMessage = $this->getLastMessage();
         if ($lastMessage) {

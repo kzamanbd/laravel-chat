@@ -429,7 +429,7 @@
                                             <p class="mb-1 font-semibold">{{ item.username }}</p>
                                             <p
                                                 class="text-white-dark max-w-[185px] truncate text-xs">
-                                                {{ item.last_message }}
+                                                {{ item.msg_preview }}
                                             </p>
                                         </div>
                                     </div>

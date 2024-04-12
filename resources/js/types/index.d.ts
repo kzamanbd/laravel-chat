@@ -29,7 +29,7 @@ export type Conversation = {
     from_user: User;
     to_user: User;
     avatar_path: string;
-    last_message: string;
+    msg_preview: string;
     last_msg_at: string;
     messages: Message[];
     active: boolean;
