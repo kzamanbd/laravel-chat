@@ -21,7 +21,7 @@
         auth: any;
         conversations: Conversation[];
         users: User[];
-        selectedConversation?: Conversation;
+        selectedConV?: Conversation;
     }>();
 
     const authUser = props.auth.user;
@@ -41,8 +41,8 @@
     });
 
     const groupByMessages = computed(function () {
-        if (props.selectedConversation?.messages?.length) {
-            return groupBy(props.selectedConversation.messages, 'msg_group');
+        if (props.selectedConV?.messages?.length) {
+            return groupBy(props.selectedConV.messages, 'msg_group');
         }
         return null;
     });
@@ -115,7 +115,7 @@
     }
 
     function scrollToBottom(): void {
-        if (props.selectedConversation) {
+        if (props.selectedConV) {
             setTimeout(() => {
                 const element = document.querySelector(
                     '#chat-box .simplebar-content'
@@ -430,7 +430,7 @@
                                 class="chat-user-item"
                                 :class="{
                                     'bg-gray-100 dark:bg-[#050b14] dark:text-primary text-primary':
-                                        selectedConversation?.id === item.id
+                                        selectedConV?.id === item.id
                                 }"
                                 @click="selectedItem(item)">
                                 <div class="flex-1">
@@ -514,7 +514,7 @@
                 @click="chat.chatMenu = !chat.chatMenu"></div>
 
             <div class="card flex-1 p-0">
-                <div v-if="selectedConversation" class="relative h-full">
+                <div v-if="selectedConV" class="relative h-full">
                     <div class="flex items-center justify-between p-4">
                         <div class="flex items-center space-x-2">
                             <button
@@ -548,7 +548,7 @@
                             </button>
                             <div class="relative flex-none">
                                 <img
-                                    :src="selectedConversation.participant.avatar_path"
+                                    :src="selectedConV.participant.avatar_path"
                                     class="h-10 w-10 rounded-full object-cover sm:h-12 sm:w-12" />
                                 <div class="absolute bottom-0 right-0">
                                     <div class="h-4 w-4 rounded-full bg-success"></div>
@@ -556,13 +556,13 @@
                             </div>
                             <div class="mx-3">
                                 <p class="font-semibold">
-                                    {{ selectedConversation.participant.name }}
+                                    {{ selectedConV.participant.name }}
                                 </p>
                                 <p class="text-white-dark text-xs">
                                     {{
-                                        selectedConversation.is_active
+                                        selectedConV.is_active
                                             ? 'Active now'
-                                            : 'Last seen at ' + selectedConversation.last_msg_at
+                                            : 'Last seen at ' + selectedConV.last_msg_at
                                     }}
                                 </p>
                             </div>
@@ -827,7 +827,7 @@
                                             'order-2': authUser.id === message.user_id
                                         }">
                                         <img
-                                            :src="message.avatar_path"
+                                            :src="message.user.avatar_path"
                                             class="h-10 w-10 rounded-full object-cover" />
                                     </div>
                                     <div class="space-y-2">

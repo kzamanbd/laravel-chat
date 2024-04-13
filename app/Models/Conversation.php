@@ -36,13 +36,6 @@ class Conversation extends Model
             ->orderBy('created_at');
     }
 
-    public function unreadMessage(): HasMany
-    {
-        return $this->hasMany(Message::class, 'conversation_id', 'id')
-            ->where('user_id', '!=', auth()->id())
-            ->where('is_seen', 0);
-    }
-
     public function getParticipantAttribute()
     {
         return $this->to_user_id == auth()->id()
@@ -89,10 +82,19 @@ class Conversation extends Model
 
     public function getLastMsgAtAttribute(): string
     {
-        $message = $this->getLastMessage();
-        if ($message) {
-            return $message->last_msg_at;
+        $updatedAt = $this->updated_at;
+        // get date week name
+        $date = $updatedAt->format('Y-m-d');
+        $week = $updatedAt->format('l');
+        $time = $updatedAt->format('h:i A');
+
+        if ($date == date('Y-m-d')) {
+            return $time;
+        } else if ($date == date('Y-m-d', strtotime('-1 day'))) {
+            return "Yesterday $time";
+        } else if ($date > date('Y-m-d', strtotime('-1 week'))) {
+            return "$week $time";
         }
-        return 'N/A';
+        return $updatedAt->format('d M Y');
     }
 }

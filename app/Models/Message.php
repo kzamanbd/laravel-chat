@@ -12,11 +12,7 @@ class Message extends Model
 
     protected $guarded = [];
     protected $appends = [
-        'username',
         'msg_group',
-        'avatar_path',
-        'last_msg_at',
-        'msg_seen_at',
         'formatted_time'
     ];
 
@@ -37,26 +33,9 @@ class Message extends Model
         return $this->belongsTo(Conversation::class, 'conversation_id', 'id');
     }
 
-    public function getMsgSeenAtAttribute()
-    {
-        return $this->seen_at
-            ? $this->seen_at->diffForHumans()
-            : null;
-    }
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function getUserNameAttribute(): string
-    {
-        return $this->user->name;
-    }
-
-    public function getAvatarPathAttribute(): string
-    {
-        return $this->user->avatar_path;
     }
 
     public function getMsgGroupAttribute(): string
@@ -73,24 +52,6 @@ class Message extends Model
             return "Yesterday";
         } else if ($date > date('Y-m-d', strtotime('-1 week'))) {
             return "$week";
-        }
-        return $createdAt->format('d M Y');
-    }
-
-    public function getLastMsgAtAttribute(): string
-    {
-        $createdAt = $this->created_at;
-        // get date week name
-        $date = $createdAt->format('Y-m-d');
-        $week = $createdAt->format('l');
-        $time = $createdAt->format('h:i A');
-
-        if ($date == date('Y-m-d')) {
-            return $time;
-        } else if ($date == date('Y-m-d', strtotime('-1 day'))) {
-            return "Yesterday $time";
-        } else if ($date > date('Y-m-d', strtotime('-1 week'))) {
-            return "$week $time";
         }
         return $createdAt->format('d M Y');
     }

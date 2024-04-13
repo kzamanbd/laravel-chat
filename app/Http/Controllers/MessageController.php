@@ -17,12 +17,11 @@ class MessageController extends Controller
         return Inertia::render('Dashboard');
     }
 
-    public function index($uuid = null)
+    public function index()
     {
         $conversations = Conversation::query()
             ->whereAny(['from_user_id', 'to_user_id'], auth()->id())
-            ->with(['fromUser:id,name,avatar_path', 'toUser:id,name,avatar_path', 'messages'])
-            ->withCount(['unreadMessage'])
+            ->with(['fromUser:id,name', 'toUser:id,name'])
             ->orderBy('updated_at', 'desc')
             ->get();
 
@@ -32,10 +31,11 @@ class MessageController extends Controller
         ))->unique();
 
         $users = User::query()->whereNotIn('id', $ids)->get();
-        $selectedConversation = null;
+        $selectedConV = null;
+        $uuid = request()->input('uuid');
         if ($uuid) {
-            $selectedConversation = Conversation::query()
-                ->with(['fromUser:id,name,avatar_path', 'toUser:id,name,avatar_path', 'messages'])
+            $selectedConV = Conversation::query()
+                ->with(['fromUser:id,name', 'toUser:id,name', 'messages:id,conversation_id,user_id,type,message,created_at', 'messages.user:id,name'])
                 ->where('uuid', $uuid)
                 ->first();
         }
@@ -43,7 +43,7 @@ class MessageController extends Controller
         return Inertia::render('Messages', [
             'conversations' => $conversations,
             'users' => $users,
-            'selectedConversation' => $selectedConversation
+            'selectedConV' => $selectedConV
         ]);
     }
 

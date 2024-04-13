@@ -18,10 +18,10 @@ export type Message = {
     id:number;
     user_id: number;
     message: string;
-    created_at: string;
+    user: User;
     msg_group: string;
     formatted_time: string;
-    avatar_path: string;
+    created_at: string;
 };
 
 export type Conversation = {
@@ -32,15 +32,4 @@ export type Conversation = {
     last_msg_at: string;
     messages: Message[];
     is_active: boolean;
-};
-
-export type Contact = {
-    userId: number;
-    name: string;
-    path: string;
-    time: string;
-    preview: string;
-    messages: Message[];
-    active: boolean;
-    uuid: String;
 };
