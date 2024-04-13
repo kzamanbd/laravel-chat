@@ -40,6 +40,10 @@
         to_user_id: null
     });
 
+    if(props.selectedConV) {
+        form.conversation_id = props.selectedConV.id;
+    }
+
     const groupByMessages = computed(function () {
         if (props.selectedConV?.messages?.length) {
             return groupBy(props.selectedConV.messages, 'msg_group');
@@ -77,14 +81,6 @@
         inputMessage.value?.focus();
         form.to_user_id = user.id;
         form.conversation_id = null;
-        const item = {
-            participant: {
-                name: user.name,
-                avatar_path: user.avatar_path
-            },
-            last_msg_at: 'now',
-            is_active: true
-        } as Conversation;
     };
 
     function selectedItem(item: Conversation): void {
@@ -102,6 +98,7 @@
                 preserveScroll: true,
                 onSuccess: () => {
                     form.reset();
+                    scrollToBottom();
                 },
                 onError: () => {
                     console.log(form.errors);
