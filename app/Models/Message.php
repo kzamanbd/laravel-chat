@@ -12,30 +12,25 @@ class Message extends Model
 
     protected $guarded = [];
     protected $appends = [
-        'username',
-        'user_avatar',
-        'last_seen_time'
+        'msg_group',
+        'formatted_time'
     ];
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'seen_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'seen_at' => 'datetime',
+        ];
+    }
 
     public function conversation(): BelongsTo
     {
         return $this->belongsTo(Conversation::class, 'conversation_id', 'id');
-    }
-
-    public function getLastSeenTimeAttribute()
-    {
-        return $this->seen_at
-            ? $this->seen_at->diffForHumans()
-            : null;
     }
 
     public function user(): BelongsTo
@@ -43,12 +38,26 @@ class Message extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function getUserNameAttribute(): string
+    public function getMsgGroupAttribute(): string
     {
-        return $this->user->name;
+        $createdAt = $this->created_at;
+        // get date week name
+        $date = $createdAt->format('Y-m-d');
+        $week = $createdAt->format('l');
+        $time = $createdAt->format('h:i A');
+
+        if ($date == date('Y-m-d')) {
+            return 'Today';
+        } else if ($date == date('Y-m-d', strtotime('-1 day'))) {
+            return "Yesterday";
+        } else if ($date > date('Y-m-d', strtotime('-1 week'))) {
+            return "$week";
+        }
+        return $createdAt->format('d M Y');
     }
-    public function getUserAvatarAttribute(): string
+
+    public function getFormattedTimeAttribute()
     {
-        return $this->user->avatar_path;
+        return $this->created_at->diffForHumans();
     }
 }

@@ -1,4 +1,4 @@
-# Laravel App
+# Laravel Revarb
 
 ![laravel](https://laravel.com/assets/img/components/logo-laravel.svg)
 
@@ -22,4 +22,4 @@ sudo chmod -R o+rw storage
 
 ## Developed by Zaman
 
-![Zaman](https://assets.gitlab-static.net/uploads/-/system/user/avatar/7189772/avatar.png?width=90)
+![Zaman](https://avatars.githubusercontent.com/u/53174140?v=4)

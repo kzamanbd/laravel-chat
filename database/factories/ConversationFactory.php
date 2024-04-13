@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Conversation>
@@ -16,9 +15,10 @@ class ConversationFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
         return [
+            'uuid' => $this->faker->uuid,
             'from_user_id' => User::all()->random()->id,
             'to_user_id' => User::all()->random()->id,
         ];
