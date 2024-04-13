@@ -17,8 +17,8 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
 export type Message = {
     id:number;
     user_id: number;
-    message: string;
     user: User;
+    message: string;
     msg_group: string;
     formatted_time: string;
     created_at: string;
