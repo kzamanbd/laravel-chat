@@ -13,16 +13,13 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained()
-                ->onDelete('cascade');
             $table->foreignId('conversation_id')
                 ->constrained()
                 ->onDelete('cascade');
+            $table->foreignId('user_id')
+                ->constrained()
+                ->onDelete('cascade');
             $table->text('message');
-            $table->boolean('is_seen')
-                ->default(false)
-                ->comment('false = unread, true = read');
             $table->string('type')
                 ->default('text')
                 ->comment('text, image, video, audio, file');
