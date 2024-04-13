@@ -31,19 +31,19 @@ class MessageController extends Controller
         ))->unique();
 
         $users = User::query()->whereNotIn('id', $ids)->get();
-        $selectedConV = null;
+        $conversation = null;
         $uuid = request()->input('uuid');
         if ($uuid) {
-            $selectedConV = Conversation::query()
+            $conversation = Conversation::query()
                 ->with(['participant', 'messages:id,conversation_id,user_id,type,message,created_at', 'messages.user:id,name'])
                 ->where('uuid', $uuid)
                 ->first(['id', 'uuid', 'from_user_id', 'to_user_id', 'created_at', 'updated_at']);
         }
 
         return Inertia::render('Messages', [
-            'conversations' => $conversations,
             'users' => $users,
-            'selectedConV' => $selectedConV
+            'conversations' => $conversations,
+            'conversation' => $conversation
         ]);
     }
 

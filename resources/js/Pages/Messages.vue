@@ -21,7 +21,7 @@
         auth: any;
         conversations: Conversation[];
         users: User[];
-        selectedConV?: Conversation;
+        conversation?: Conversation;
     }>();
 
     const authUser = props.auth.user;
@@ -40,13 +40,15 @@
         to_user_id: null
     });
 
-    if(props.selectedConV) {
-        form.conversation_id = props.selectedConV.id;
+    const selectedConV = ref(props.conversation);
+
+    if (selectedConV.value) {
+        form.conversation_id = selectedConV.value.id;
     }
 
     const groupByMessages = computed(function () {
-        if (props.selectedConV?.messages?.length) {
-            return groupBy(props.selectedConV.messages, 'msg_group');
+        if (selectedConV.value?.messages?.length) {
+            return groupBy(selectedConV.value.messages, 'msg_group');
         }
         return null;
     });
@@ -81,6 +83,15 @@
         inputMessage.value?.focus();
         form.to_user_id = user.id;
         form.conversation_id = null;
+        const item = {
+            participant: {
+                name: user.name,
+                avatar_path: user.avatar_path
+            },
+            last_msg_at: 'now',
+            is_active: true
+        } as Conversation;
+        selectedConV.value = item;
     };
 
     function selectedItem(item: Conversation): void {
@@ -112,7 +123,7 @@
     }
 
     function scrollToBottom(): void {
-        if (props.selectedConV) {
+        if (selectedConV.value) {
             setTimeout(() => {
                 const element = document.querySelector(
                     '#chat-box .simplebar-content'
