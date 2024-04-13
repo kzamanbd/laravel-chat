@@ -13,22 +13,11 @@ class Conversation extends Model
     use HasFactory;
     protected $guarded = [];
     protected $appends = [
-        'participant',
         'is_active',
         'msg_preview',
         'last_msg_at',
         'last_active_at'
     ];
-
-    public function fromUser(): HasOne
-    {
-        return $this->hasOne(User::class, 'id', 'from_user_id');
-    }
-
-    public function toUser(): HasOne
-    {
-        return $this->hasOne(User::class, 'id', 'to_user_id');
-    }
 
     public function messages(): HasMany
     {
@@ -36,11 +25,12 @@ class Conversation extends Model
             ->orderBy('created_at');
     }
 
-    public function getParticipantAttribute()
+    public function participant(): HasOne
     {
-        return $this->to_user_id == auth()->id()
-            ? $this->fromUser
-            : $this->toUser;
+        if ($this->to_user_id == auth()->id()) {
+            return $this->hasOne(User::class, 'id', 'from_user_id');
+        }
+        return $this->hasOne(User::class, 'id', 'to_user_id');
     }
 
     public function getIsActiveAttribute(): bool

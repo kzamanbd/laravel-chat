@@ -20,8 +20,8 @@ class MessageController extends Controller
     public function index()
     {
         $conversations = Conversation::query()
+            ->with(['participant'])
             ->whereAny(['from_user_id', 'to_user_id'], auth()->id())
-            ->with(['fromUser:id,name', 'toUser:id,name'])
             ->orderBy('updated_at', 'desc')
             ->get();
 
@@ -35,9 +35,9 @@ class MessageController extends Controller
         $uuid = request()->input('uuid');
         if ($uuid) {
             $selectedConV = Conversation::query()
-                ->with(['fromUser:id,name', 'toUser:id,name', 'messages:id,conversation_id,user_id,type,message,created_at', 'messages.user:id,name'])
+                ->with(['participant', 'messages:id,conversation_id,user_id,type,message,created_at', 'messages.user:id,name'])
                 ->where('uuid', $uuid)
-                ->first();
+                ->first(['id', 'uuid', 'from_user_id', 'to_user_id', 'created_at', 'updated_at']);
         }
 
         return Inertia::render('Messages', [
