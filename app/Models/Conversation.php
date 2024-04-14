@@ -13,10 +13,9 @@ class Conversation extends Model
     use HasFactory;
     protected $guarded = [];
     protected $appends = [
-        'is_active',
         'msg_preview',
-        'last_msg_at',
-        'last_active_at'
+        // 'last_msg_at',
+        // 'last_active_at'
     ];
 
     public function messages(): HasMany
@@ -33,15 +32,6 @@ class Conversation extends Model
         return $this->hasOne(User::class, 'id', 'to_user_id');
     }
 
-    public function getIsActiveAttribute(): bool
-    {
-        $key = $this->to_user_id == auth()->id()
-            ? $this->from_user_id
-            : $this->to_user_id;
-
-        return cache()->has("is_active$key");
-    }
-
     public function getLastActiveAtAttribute()
     {
         $key = $this->to_user_id == auth()->id()
@@ -50,14 +40,9 @@ class Conversation extends Model
         return Helpers::getLastActiveAt($key);
     }
 
-    public function getLastMessage()
-    {
-        return $this->messages->last();
-    }
-
     public function getMsgPreviewAttribute(): string
     {
-        $lastMessage = $this->getLastMessage();
+        $lastMessage = $this->messages->last();
         if ($lastMessage) {
             // remove html tags
             $message = strip_tags($lastMessage->message);
