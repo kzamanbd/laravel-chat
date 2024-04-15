@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             print_r($e->getMessage() . "\n");
         }
 
-        Conversation::factory(100)->create();
-        Message::factory(100)->create();
+        // Conversation::factory(100)->create();
+        // Message::factory(100)->create();
     }
 }
